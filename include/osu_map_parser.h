@@ -41,10 +41,16 @@ typedef struct OsuIntegerVector {
 	int	y;
 } OsuIntegerVector;
 
+typedef struct OsuMap_integerArray {
+	size_t		length;
+	unsigned int	*content;
+} OsuMap_unsignedIntegerArray;
+
 typedef struct OsuMap_generalInfos {
 	char		*audioFileName;
 	long		audioLeadIn;
 	unsigned long	previewTime;
+	enum OsuGameMode	mode;
 	bool		countdown;
 	char		*hitSoundsSampleSet;
 	float		stackLeniency;
@@ -57,24 +63,24 @@ typedef struct OsuMap_generalInfos {
 } OsuMap_generalInfos;
 
 typedef struct OsuMap_editorInfos {
-	unsigned int	*bookmarks;
-	float		distanceSpacing;
-	int		beatDivision;
-	int		gridSize;
-	int		timeLineZoom;
+	OsuMap_unsignedIntegerArray	bookmarks;
+	float				distanceSpacing;
+	int				beatDivision;
+	int				gridSize;
+	int				timeLineZoom;
 } OsuMap_editorInfos;
 
 typedef struct OsuMap_metaData {
-	char	*title;
-	char	*unicodeTitle;
-	char	*artist;
-	char	*artistUnicode;
-	char	*creator;
-	char	*difficulty;
-	char	*musicOrigin;
-	char	**tags;
-	long	beatmapID;
-	long	beatmapSetID;
+	char		*title;
+	char		*unicodeTitle;
+	char		*artist;
+	char		*artistUnicode;
+	char		*creator;
+	char		*difficulty;
+	char		*musicOrigin;
+	char		**tags;
+	unsigned long	beatmapID;
+	unsigned long	beatmapSetID;
 } OsuMap_metaData;
 
 typedef struct OsuMap_difficultyInfos {
@@ -127,6 +133,11 @@ typedef struct OsuMap_sampleSet {
 	long additionsSampleSet;
 } OsuMap_sampleSet;
 
+typedef struct OsuMapCategory {
+	char	*name;
+	char	**lines;
+} OsuMapCategory;
+
 typedef struct OsuMap_hitObjectAddition {
 	OsuMap_sampleSet	sampleSet;
 	long			customIndex;
@@ -166,7 +177,6 @@ typedef struct OsuMap_hitObjectArray {
 typedef struct OsuMap {
 	char			*error;
 	unsigned int		fileVersion;
-	enum OsuGameMode	mode;
 	OsuMap_generalInfos	generalInfos;
 	OsuMap_editorInfos	editorInfos;
 	OsuMap_metaData		metaData;
@@ -177,7 +187,6 @@ typedef struct OsuMap {
 	OsuMap_timingPointArray	timingPoints;
 	OsuMap_colorArray	colors;
 	OsuMap_hitObjectArray	hitObjects;
-
 } OsuMap;
 
 #endif //OSUMAP_PARSER_LIBRARY_H
