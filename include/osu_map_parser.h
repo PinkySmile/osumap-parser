@@ -53,7 +53,7 @@ typedef struct OsuMap_generalInfos {
 	enum OsuGameMode	mode;
 	bool		countdown;
 	char		*hitSoundsSampleSet;
-	float		stackLeniency;
+	double		stackLeniency;
 	bool		letterBoxInBreaks;
 	bool		widescreenStoryboard;
 	bool		storyFireInFront;
@@ -64,10 +64,10 @@ typedef struct OsuMap_generalInfos {
 
 typedef struct OsuMap_editorInfos {
 	OsuMap_unsignedIntegerArray	bookmarks;
-	float				distanceSpacing;
+	double				distanceSpacing;
 	int				beatDivision;
 	int				gridSize;
-	int				timeLineZoom;
+	double				timeLineZoom;
 } OsuMap_editorInfos;
 
 typedef struct OsuMap_metaData {
@@ -84,12 +84,12 @@ typedef struct OsuMap_metaData {
 } OsuMap_metaData;
 
 typedef struct OsuMap_difficultyInfos {
-	float	hpDrainRate;
-	float	circleSize;
-	float	overallDifficulty;
-	float	approachRate;
-	float	sliderMultiplayer;
-	float	sliderTickRate;
+	double	hpDrainRate;
+	double	circleSize;
+	double	overallDifficulty;
+	double	approachRate;
+	double	sliderMultiplayer;
+	double	sliderTickRate;
 } OsuMap_difficultyInfos;
 
 typedef struct OsuMap_storyboardEvent {
@@ -129,8 +129,8 @@ typedef struct OsuMap_colorArray {
 } OsuMap_colorArray;
 
 typedef struct OsuMap_sampleSet {
-	long sampleSet;
-	long additionsSampleSet;
+	char	sampleSet;
+	char	additionsSampleSet;
 } OsuMap_sampleSet;
 
 typedef struct OsuMapCategory {
@@ -152,11 +152,10 @@ typedef struct OsuIntegerVectorArray {
 
 typedef struct OsuMap_hitObjectSliderInfos {
 	char			type;
-	OsuIntegerVectorArray	*curvePoints;
+	OsuIntegerVectorArray	curvePoints;
 	unsigned int		nbOfRepeats;
-	unsigned int		pixelLength;
+	double			pixelLength;
 	unsigned char		*edgeHitsounds;
-	unsigned long		endTime;
 	OsuMap_sampleSet	*edgeAdditions;
 } OsuMap_hitObjectSliderInfos;
 
@@ -165,8 +164,8 @@ typedef struct OsuMap_hitObject {
 	long				timeToAppear;
 	unsigned char			type;
 	unsigned char			hitSound;
-	OsuMap_hitObjectSliderInfos	*sliderInfos;
-	OsuMap_hitObjectAddition	addition;
+	void				*additionalInfos;
+	OsuMap_hitObjectAddition	extra;
 } OsuMap_hitObject;
 
 typedef struct OsuMap_hitObjectArray {
@@ -188,5 +187,8 @@ typedef struct OsuMap {
 	OsuMap_colorArray	colors;
 	OsuMap_hitObjectArray	hitObjects;
 } OsuMap;
+
+OsuMap	OsuMap_parseMapString(char *string);
+OsuMap	OsuMap_parseMapFile(char *path);
 
 #endif //OSUMAP_PARSER_LIBRARY_H
