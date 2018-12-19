@@ -98,6 +98,10 @@ bool	OsuMap_stringStartsWith(char *str, char *compare)
 
 unsigned int	OsuMap_parseHeader(char *line, char *err_buffer, jmp_buf jump_buffer)
 {
+	if (!line) {
+		sprintf(err_buffer, "Invalid header: Expected 'osu file format vXX' but got EOF");
+		longjmp(jump_buffer, true);
+	}
 	if (!OsuMap_stringStartsWith(line, "osu file format v")) {
 		sprintf(err_buffer, "Invalid header: Expected 'osu file format vXX' but got %s", line);
 		longjmp(jump_buffer, true);
@@ -120,13 +124,15 @@ void	OsuMap_deleteLine(char **lines)
 void	OsuMap_deleteEmptyLines(char **lines)
 {
 	for (int i = 0; lines[i]; i++) {
-		if (lines[i][strlen(lines[i]) - 1] == '\r')
+		if (*lines[i] && lines[i][strlen(lines[i]) - 1] == '\r')
 			lines[i][strlen(lines[i]) - 1] = 0;
 		while (*lines[i] == 0) {
 			OsuMap_deleteLine(&lines[i]);
 			if (!lines[i])
 				return;
 		}
+		if (lines[i][strlen(lines[i]) - 1] == '\r')
+			lines[i][strlen(lines[i]) - 1] = 0;
 	}
 }
 
@@ -137,6 +143,14 @@ OsuMapCategory	*OsuMap_getCategories(char **lines, char *error_buffer, jmp_buf j
 	size_t		start = 0;
 	size_t		currentIndex = 0;
 
+	if (!lines[0]) {
+		categories = malloc(sizeof(*categories));
+		if (!categories) {
+			sprintf(error_buffer, "Memory allocation error (%luB)", (unsigned long)sizeof(*categories));
+			longjmp(jump_buffer, true);
+		}
+		memset(categories, 0, sizeof(*categories));
+	}
 	for (int i = 0; lines[i]; i++)
 		len += (lines[i][0] == '[' || lines[i][strlen(lines[i]) - 1] == ']');
 	if (lines[0][0] != '[' || lines[0][strlen(lines[0]) - 1] != ']') {
