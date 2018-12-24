@@ -647,7 +647,7 @@ OsuMap_hitObject	OsuMap_parseLineToHitObject(char *line, char *err_buffer, jmp_b
 			free(old);
 			longjmp(jump_buffer, true);
 		}
-		*(long *)obj.additionalInfos = OsuMap_getInteger(elems[5], 0, 255, err_buffer, jump_buffer);
+		*(long *)obj.additionalInfos = OsuMap_getInteger(elems[5], 1, 0, err_buffer, jump_buffer);
 		if (len == 7)
 			obj.extra = OsuMap_getExtraInfos(elems[6], err_buffer, jump_buffer);
 
