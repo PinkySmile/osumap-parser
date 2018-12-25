@@ -320,7 +320,7 @@ OsuMap_unsignedIntegerArray	OsuMap_getCategoryElementUIntegerArray(char **lines,
 		if (OsuMap_stringStartsWith(lines[i], buffer)) {
 			for (size_t j = strlen(name) + 2; lines[i][j]; j++)
 				result.length += lines[i][j] == ',';
-			result.content = malloc(result.length * sizeof(*result.content));
+			result.content = malloc((result.length + 1) * sizeof(*result.content));
 			if (!result.content) {
 				sprintf(err_buffer, "Memory allocation error (%luB)", (unsigned long)(result.length * sizeof(*result.content)));
 				longjmp(jump_buffer, true);
