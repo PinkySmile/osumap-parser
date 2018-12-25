@@ -432,25 +432,25 @@ OsuMap_difficultyInfos	OsuMap_getCategoryDifficulty(OsuMapCategory *category, ch
 	return infos;
 }
 
-int	OsuMap_getInteger(char *nbr, int min, int max, char *err_buffer, jmp_buf jump_buffer)
+long	OsuMap_getInteger(char *nbr, int min, int max, char *err_buffer, jmp_buf jump_buffer)
 {
 	char	*end;
-	int	result = strtol(nbr, &end, 10);
+	long	result = strtol(nbr, &end, 10);
 
 	if (*end) {
 		sprintf(err_buffer, "%s is not a valid number\n", nbr);
 		longjmp(jump_buffer, true);
 	}
 	if (min < max && (result < min || result > max)) {
-		sprintf(err_buffer, "%i is not in range %i-%i\n", result, min, max);
+		sprintf(err_buffer, "%li is not in range %i-%i\n", result, min, max);
 		longjmp(jump_buffer, true);
 	}
 	if (min > max && min < 0 && result > 0) {
-		sprintf(err_buffer, "%i is not a negative value\n", result);
+		sprintf(err_buffer, "%li is not a negative value\n", result);
 		longjmp(jump_buffer, true);
 	}
 	if (min > max && min > 0 && result < 0) {
-		sprintf(err_buffer, "%i is not a positive value\n", result);
+		sprintf(err_buffer, "%li is not a positive value\n", result);
 		longjmp(jump_buffer, true);
 	}
 	return result;
@@ -701,6 +701,104 @@ OsuMap_hitObjectArray	OsuMap_getCategoryHitObject(OsuMapCategory *category, char
 	return elements;
 }
 
+OsuMap_color	OsuMap_parseLineColor(char *line, char *err_buffer, jmp_buf jump_buffer, int nb)
+{
+	OsuMap_color	 color;
+	char		buffer[11];
+	int		i = 5;
+	char		**elems;
+
+	sprintf(buffer, "%i", nb + 1);
+	if (strncmp(buffer, &line[i], strlen(buffer)) != 0) {
+		sprintf(
+			err_buffer,
+			"Unsorted list found: %i%s element's number is %i\n",
+			nb + 1,
+			buffer[strlen(buffer) - 1] == '1' ? "st" : (
+				buffer[strlen(buffer) - 1] == '2' ? "nd" : (
+					buffer[strlen(buffer) - 1] == '3' ? "rd" : "th"
+				)
+			),
+			atoi(&line[i])
+		);
+		longjmp(jump_buffer, true);
+	}
+	i += strlen(buffer);
+	for (; line[i] == ' '; i++);
+	if (line[i] != ':') {
+		sprintf(err_buffer, "Unexpected character found '%c' in line '%s'", line[i], line);
+		longjmp(jump_buffer, true);
+	} else
+		i++;
+	for (; line[i] == ' '; i++);
+	elems = OsuMap_splitString(&line[i], ',', err_buffer, jump_buffer);
+	if (OsuMap_getStringArraySize(elems) != 3) {
+		sprintf(err_buffer, "Invalid color '%s': Expected RGB value but %u values were found", line, OsuMap_getStringArraySize(elems));
+		free(elems);
+		longjmp(jump_buffer, true);
+	}
+	for (int j = 1; j < 2; j++)
+		while (*elems[j] == ' ')
+			elems[j]++;
+	color.red = OsuMap_getInteger(elems[0], 0, 255, err_buffer, jump_buffer);
+	color.green = OsuMap_getInteger(elems[1], 0, 255, err_buffer, jump_buffer);
+	color.blue = OsuMap_getInteger(elems[2], 0, 255, err_buffer, jump_buffer);
+	free(elems);
+	return color;
+}
+
+OsuMap_colorArray	OsuMap_getCategoryColors(OsuMapCategory *category, char *err_buffer, jmp_buf jump_buffer)
+{
+	OsuMap_colorArray	elements = {0, NULL};
+
+	memset(&elements, 0, sizeof(elements));
+	if (!category) {
+		sprintf(err_buffer, "The category \"Colours\" was not found\n");
+		longjmp(jump_buffer, true);
+	}
+
+	for (int i = 0; category->lines[i]; i++)
+		elements.length += OsuMap_stringStartsWith(category->lines[i], "Combo");
+	elements.content = malloc(elements.length * sizeof(*elements.content));
+	if (!elements.content) {
+		sprintf(err_buffer, "Memory allocation error (%luB)\n", (unsigned long)(elements.length * sizeof(*elements.content)));
+		longjmp(jump_buffer, true);
+	}
+	for (int i = 0; category->lines[i]; i++)
+		if (OsuMap_stringStartsWith(category->lines[i], "Combo"))
+			elements.content[i] = OsuMap_parseLineColor(category->lines[i], err_buffer, jump_buffer, i);
+	return elements;
+}
+
+OsuMap_timingPointArray	OsuMap_getCatergoryTimingPoints(OsuMapCategory *category, char *err_buffer, jmp_buf jump_buffer)
+{
+	OsuMap_timingPointArray	elements = {0, NULL};
+	char			**elems;
+	double			buffer;
+
+	memset(&elements, 0, sizeof(elements));
+	if (!category) {
+		sprintf(err_buffer, "The category \"TimingPoints\" was not found\n");
+		longjmp(jump_buffer, true);
+	}
+
+	for (; category->lines[elements.length]; elements.length++);
+	elements.content = malloc(elements.length * sizeof(*elements.content));
+	if (!elements.content) {
+		sprintf(err_buffer, "Memory allocation error (%luB)\n", (unsigned long)(elements.length * sizeof(*elements.content)));
+		longjmp(jump_buffer, true);
+	}
+	for (int i = 0; category->lines[i]; i++) {
+		elems = OsuMap_splitString(category->lines[i], ',', err_buffer, jump_buffer);
+		elements.content[i].timeToHappen = (unsigned long)OsuMap_getInteger(elems[0], 1, 0, err_buffer, jump_buffer);
+		buffer = OsuMap_getFloat(elems[1], 0, 0, err_buffer, jump_buffer);
+		elements.content[i].inherited = buffer < 0;
+		elements.content[i].millisecondsPerBeat = buffer;
+		free(elems);
+	}
+	return elements;
+}
+
 OsuMapCategory	*OsuMap_getCategory(OsuMapCategory *categories, char *name)
 {
 	for (int i = 0; categories[i].name; i++) {
@@ -739,11 +837,13 @@ OsuMap	OsuMap_parseMapString(char *string)
 	OsuMap_deleteLine(lines);
 	categories = OsuMap_getCategories(lines, error , jump_buffer);
 
-	result.generalInfos = OsuMap_getCategoryGeneral(OsuMap_getCategory(categories, "General"), error, jump_buffer);
-	result.editorInfos = OsuMap_getCategoryEditor(OsuMap_getCategory(categories, "Editor"), error, jump_buffer);
-	result.metaData = OsuMap_getCategoryMetaData(OsuMap_getCategory(categories, "Metadata"), error, jump_buffer);
-	result.difficulty = OsuMap_getCategoryDifficulty(OsuMap_getCategory(categories, "Difficulty"), error, jump_buffer);
-	result.hitObjects = OsuMap_getCategoryHitObject(OsuMap_getCategory(categories, "HitObjects"), error, jump_buffer);
+	result.generalInfos = OsuMap_getCategoryGeneral		(OsuMap_getCategory(categories, "General"),	error, jump_buffer);
+	result.editorInfos = OsuMap_getCategoryEditor		(OsuMap_getCategory(categories, "Editor"),	error, jump_buffer);
+	result.metaData = OsuMap_getCategoryMetaData		(OsuMap_getCategory(categories, "Metadata"),	error, jump_buffer);
+	result.difficulty = OsuMap_getCategoryDifficulty	(OsuMap_getCategory(categories, "Difficulty"),	error, jump_buffer);
+	result.hitObjects = OsuMap_getCategoryHitObject		(OsuMap_getCategory(categories, "HitObjects"),	error, jump_buffer);
+	result.colors = OsuMap_getCategoryColors		(OsuMap_getCategory(categories, "Colours"),	error, jump_buffer);
+	result.timingPoints = OsuMap_getCatergoryTimingPoints	(OsuMap_getCategory(categories, "TimingPoints"),error, jump_buffer);
 
 	for (int i = 0; categories && categories[i].lines; i++)
 		free(categories[i].lines);

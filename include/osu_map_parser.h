@@ -161,7 +161,7 @@ typedef struct OsuMap_hitObjectSliderInfos {
 
 typedef struct OsuMap_hitObject {
 	OsuIntegerVector		position;
-	long				timeToAppear;
+	unsigned long			timeToAppear;
 	unsigned char			type;
 	unsigned char			hitSound;
 	void				*additionalInfos;
