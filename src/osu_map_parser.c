@@ -435,9 +435,9 @@ OsuMap_difficultyInfos	OsuMap_getCategoryDifficulty(OsuMapCategory *category, ch
 long	OsuMap_getInteger(char *nbr, int min, int max, char *err_buffer, jmp_buf jump_buffer)
 {
 	char	*end;
-	long	result = strtol(nbr, &end, 10);
+	long	result = nbr ? strtol(nbr, &end, 10) : 0;
 
-	if (*end) {
+	if (!nbr || *end) {
 		sprintf(err_buffer, "%s is not a valid number\n", nbr);
 		longjmp(jump_buffer, true);
 	}
@@ -459,9 +459,9 @@ long	OsuMap_getInteger(char *nbr, int min, int max, char *err_buffer, jmp_buf ju
 double	OsuMap_getFloat(char *nbr, double min, double max, char *err_buffer, jmp_buf jump_buffer)
 {
 	char	*end;
-	double	result = strtof(nbr, &end);
+	double	result = nbr ? strtof(nbr, &end) : 0;
 
-	if (*end) {
+	if (!nbr || *end) {
 		sprintf(err_buffer, "%s is not a valid number\n", nbr);
 		longjmp(jump_buffer, true);
 	}
@@ -790,10 +790,13 @@ OsuMap_timingPointArray	OsuMap_getCatergoryTimingPoints(OsuMapCategory *category
 	}
 	for (int i = 0; category->lines[i]; i++) {
 		elems = OsuMap_splitString(category->lines[i], ',', err_buffer, jump_buffer);
-		elements.content[i].timeToHappen = (unsigned long)OsuMap_getInteger(elems[0], 1, 0, err_buffer, jump_buffer);
-		buffer = OsuMap_getFloat(elems[1], 0, 0, err_buffer, jump_buffer);
-		elements.content[i].inherited = buffer < 0;
-		elements.content[i].millisecondsPerBeat = buffer;
+		if (OsuMap_getStringArraySize(elems) > 0)
+			elements.content[i].timeToHappen = (unsigned long)OsuMap_getInteger(elems[0], 1, 0, err_buffer, jump_buffer);
+		if (OsuMap_getStringArraySize(elems) > 1) {
+			buffer = OsuMap_getFloat(elems[1], 0, 0, err_buffer, jump_buffer);
+			elements.content[i].inherited = buffer < 0;
+			elements.content[i].millisecondsPerBeat = buffer;
+		}
 		free(elems);
 	}
 	return elements;
