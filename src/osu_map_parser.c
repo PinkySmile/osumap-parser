@@ -121,15 +121,25 @@ void	OsuMap_deleteLine(char **lines)
 		lines[i] = lines[i + 1];
 }
 
+void	OsuMap_deleteComments(char *line)
+{
+	for (int i = 0; line[i] && line[i] != ':' && line[i] != '"' && line[i] != '\''; i++)
+		if (line[i] == '/' && line[i + 1] == '/') {
+			line[i] = 0;
+			return;
+		}
+}
 void	OsuMap_deleteEmptyLines(char **lines)
 {
 	for (int i = 0; lines[i]; i++) {
+		OsuMap_deleteComments(lines[i]);
 		if (*lines[i] && lines[i][strlen(lines[i]) - 1] == '\r')
 			lines[i][strlen(lines[i]) - 1] = 0;
 		while (*lines[i] == 0) {
 			OsuMap_deleteLine(&lines[i]);
 			if (!lines[i])
 				return;
+			OsuMap_deleteComments(lines[i]);
 		}
 		if (lines[i][strlen(lines[i]) - 1] == '\r')
 			lines[i][strlen(lines[i]) - 1] = 0;
@@ -802,6 +812,20 @@ OsuMap_timingPointArray	OsuMap_getCatergoryTimingPoints(OsuMapCategory *category
 	return elements;
 }
 
+char	*OsuMap_getBackgroundPath(OsuMapCategory *category, char *err_buffer, jmp_buf jump_buffer)
+{
+	char	*result;
+	char	**elems = category->lines[0] ? OsuMap_splitString(category->lines[0], ',', err_buffer, jump_buffer) : NULL;
+
+	if (!elems || OsuMap_getStringArraySize(elems) < 3)
+		return free(elems), NULL;
+	result = elems[2];
+	free(elems);
+	if (*result != '"' || result[strlen(result) - 1] != '"')
+		return NULL;
+	return result + 1;
+}
+
 OsuMapCategory	*OsuMap_getCategory(OsuMapCategory *categories, char *name)
 {
 	for (int i = 0; categories[i].name; i++) {
@@ -847,6 +871,7 @@ OsuMap	OsuMap_parseMapString(char *string)
 	result.hitObjects = OsuMap_getCategoryHitObject		(OsuMap_getCategory(categories, "HitObjects"),	error, jump_buffer);
 	result.colors = OsuMap_getCategoryColors		(OsuMap_getCategory(categories, "Colours"),	error, jump_buffer);
 	result.timingPoints = OsuMap_getCatergoryTimingPoints	(OsuMap_getCategory(categories, "TimingPoints"),error, jump_buffer);
+	result.backgroundPath = OsuMap_getBackgroundPath	(OsuMap_getCategory(categories, "Events"),	error, jump_buffer);
 
 	for (int i = 0; categories && categories[i].lines; i++)
 		free(categories[i].lines);
