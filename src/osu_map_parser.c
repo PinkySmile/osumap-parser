@@ -522,8 +522,8 @@ OsuIntegerVectorArray	OsuMap_getIntegerVectorArray(char *str, char *err_buffer, 
 		free(elems);
 		longjmp(jump_buffer, true);
 	}
-	for (int i = 0; elems[i] && *elems[i]; i++)
-		array.content[i] = OsuMap_getIntegerVector(elems[i], err_buffer, jump_buffer);
+	for (array.length = 0; elems[array.length] && *elems[array.length]; array.length++)
+		array.content[array.length] = OsuMap_getIntegerVector(elems[array.length], err_buffer, jump_buffer);
 	free(elems);
 	return array;
 }
@@ -571,6 +571,8 @@ OsuMap_hitObjectSliderInfos	OsuMap_getSliderInfos(char **elems, char *err_buffer
 		sprintf(err_buffer, "Invalid slider curves arguments '%s'", elems[0]);
 		longjmp(jump_buffer, true);
 	}
+	if (infos.type == 'C')
+		write(2, "OsuMapParser: Warning: Deprecated slider type 'C' (Catmull) might not be supported\n", 83);
 	infos.curvePoints = OsuMap_getIntegerVectorArray(&elems[0][2], err_buffer, jump_buffer);
 	infos.nbOfRepeats = OsuMap_getInteger(elems[1], 1, 0, err_buffer, jump_buffer);
 	infos.pixelLength = OsuMap_getFloat(elems[2], 1, 0, err_buffer, jump_buffer);
