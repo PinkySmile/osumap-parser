@@ -361,7 +361,7 @@ OsuMap_generalInfos	OsuMap_getCategoryGeneral(OsuMapCategory *category, char *er
 
 	memset(&infos, 0, sizeof(infos));
 	if (!category) {
-		sprintf(err_buffer, "The category \"General\" was not found\n");
+		sprintf(err_buffer, "The category \"General\" was not found");
 		longjmp(jump_buffer, true);
 	}
 
@@ -404,7 +404,7 @@ OsuMap_metaData	OsuMap_getCategoryMetaData(OsuMapCategory *category, char *err_b
 
 	memset(&infos, 0, sizeof(infos));
 	if (!category) {
-		sprintf(err_buffer, "The category \"Metadata\" was not found\n");
+		sprintf(err_buffer, "The category \"Metadata\" was not found");
 		longjmp(jump_buffer, true);
 	}
 
@@ -427,7 +427,7 @@ OsuMap_difficultyInfos	OsuMap_getCategoryDifficulty(OsuMapCategory *category, ch
 
 	memset(&infos, 0, sizeof(infos));
 	if (!category) {
-		sprintf(err_buffer, "The category \"Difficulty\" was not found\n");
+		sprintf(err_buffer, "The category \"Difficulty\" was not found");
 		longjmp(jump_buffer, true);
 	}
 
@@ -448,19 +448,19 @@ long	OsuMap_getInteger(char *nbr, int min, int max, char *err_buffer, jmp_buf ju
 	long	result = nbr ? strtol(nbr, &end, 10) : 0;
 
 	if (!nbr || *end) {
-		sprintf(err_buffer, "%s is not a valid number\n", nbr);
+		sprintf(err_buffer, "%s is not a valid number", nbr);
 		longjmp(jump_buffer, true);
 	}
 	if (min < max && (result < min || result > max)) {
-		sprintf(err_buffer, "%li is not in range %i-%i\n", result, min, max);
+		sprintf(err_buffer, "%li is not in range %i-%i", result, min, max);
 		longjmp(jump_buffer, true);
 	}
 	if (min > max && min < 0 && result > 0) {
-		sprintf(err_buffer, "%li is not a negative value\n", result);
+		sprintf(err_buffer, "%li is not a negative value", result);
 		longjmp(jump_buffer, true);
 	}
 	if (min > max && min > 0 && result < 0) {
-		sprintf(err_buffer, "%li is not a positive value\n", result);
+		sprintf(err_buffer, "%li is not a positive value", result);
 		longjmp(jump_buffer, true);
 	}
 	return result;
@@ -472,19 +472,19 @@ double	OsuMap_getFloat(char *nbr, double min, double max, char *err_buffer, jmp_
 	double	result = nbr ? strtof(nbr, &end) : 0;
 
 	if (!nbr || *end) {
-		sprintf(err_buffer, "%s is not a valid number\n", nbr);
+		sprintf(err_buffer, "%s is not a valid number", nbr);
 		longjmp(jump_buffer, true);
 	}
 	if (min < max && (result < min || result > max)) {
-		sprintf(err_buffer, "%f is not in range %f-%f\n", result, min, max);
+		sprintf(err_buffer, "%f is not in range %f-%f", result, min, max);
 		longjmp(jump_buffer, true);
 	}
 	if (min > max && min < 0 && result > 0) {
-		sprintf(err_buffer, "%f is not a negative value\n", result);
+		sprintf(err_buffer, "%f is not a negative value", result);
 		longjmp(jump_buffer, true);
 	}
 	if (min > max && min > 0 && result < 0) {
-		sprintf(err_buffer, "%f is not a positive value\n", result);
+		sprintf(err_buffer, "%f is not a positive value", result);
 		longjmp(jump_buffer, true);
 	}
 	return result;
@@ -498,7 +498,7 @@ OsuIntegerVector	OsuMap_getIntegerVector(char *str, char *err_buffer, jmp_buf ju
 	OsuIntegerVector	vector;
 
 	if (len != 2) {
-		sprintf("Invalid integer vector '%s': Expected 2 values but got %u\n", line, (unsigned)len);
+		sprintf("Invalid integer vector '%s': Expected 2 values but got %u", line, (unsigned)len);
 		free(line);
 		free(elems);
 		longjmp(jump_buffer, true);
@@ -534,7 +534,7 @@ OsuMap_hitObjectAddition	OsuMap_getExtraInfos(char *line, char *err_buffer, jmp_
 	char				**elems = OsuMap_splitString(line, ':', err_buffer, jump_buffer);
 
 	if (OsuMap_getStringArraySize(elems) != 5) {
-		sprintf(err_buffer, "Invalid extra infos '%s': 5 fields expected but %u found\n", line, (unsigned)OsuMap_getStringArraySize(elems));
+		sprintf(err_buffer, "Invalid extra infos '%s': 5 fields expected but %u found", line, (unsigned)OsuMap_getStringArraySize(elems));
 		longjmp(jump_buffer, true);
 	}
 	memset(&infos, 0, sizeof(infos));
@@ -630,7 +630,7 @@ OsuMap_hitObject	OsuMap_parseLineToHitObject(char *line, char *err_buffer, jmp_b
 
 	len = OsuMap_getStringArraySize(elems);
 	if (len <= 5) {
-		sprintf(err_buffer, "Invalid Hit object infos '%s': At least 5 fields expected but %i found\n", line, len);
+		sprintf(err_buffer, "Invalid Hit object infos '%s': At least 5 fields expected but %i found", line, len);
 		free(old);
 		longjmp(jump_buffer, true);
 	}
@@ -643,7 +643,7 @@ OsuMap_hitObject	OsuMap_parseLineToHitObject(char *line, char *err_buffer, jmp_b
 
 	if (obj.type & HITOBJ_SLIDER) {
 		if (len < 8 || len > 11) {
-			sprintf(err_buffer, "Invalid hit object infos '%s': 8-11 fields expected but %i found\n", old, len);
+			sprintf(err_buffer, "Invalid hit object infos '%s': 8-11 fields expected but %i found", old, len);
 			free(elems);
 			free(old);
 			longjmp(jump_buffer, true);
@@ -661,7 +661,7 @@ OsuMap_hitObject	OsuMap_parseLineToHitObject(char *line, char *err_buffer, jmp_b
 
 	} else if (obj.type & HITOBJ_SPINNER) {
 		if (len < 6 || len > 7) {
-			sprintf(err_buffer, "Invalid hit object infos '%s': 7 fields expected but %i found\n", old, len);
+			sprintf(err_buffer, "Invalid hit object infos '%s': 7 fields expected but %i found", old, len);
 			free(elems);
 			free(old);
 			longjmp(jump_buffer, true);
@@ -679,7 +679,7 @@ OsuMap_hitObject	OsuMap_parseLineToHitObject(char *line, char *err_buffer, jmp_b
 
 	} else {
 		if (len < 5 || len > 6) {
-			sprintf(err_buffer, "Invalid hit object infos '%s': 6 fields expected but %i found\n", old, len);
+			sprintf(err_buffer, "Invalid hit object infos '%s': 6 fields expected but %i found", old, len);
 			free(elems);
 			free(old);
 			longjmp(jump_buffer, true);
@@ -698,14 +698,14 @@ OsuMap_hitObjectArray	OsuMap_getCategoryHitObject(OsuMapCategory *category, char
 
 	memset(&elements, 0, sizeof(elements));
 	if (!category) {
-		sprintf(err_buffer, "The category \"HitObject\" was not found\n");
+		sprintf(err_buffer, "The category \"HitObject\" was not found");
 		longjmp(jump_buffer, true);
 	}
 
 	for (; category->lines[elements.length]; elements.length++);
 	elements.content = malloc(elements.length * sizeof(*elements.content));
 	if (!elements.content) {
-		sprintf(err_buffer, "Memory allocation error (%luB)\n", (unsigned long)(elements.length * sizeof(*elements.content)));
+		sprintf(err_buffer, "Memory allocation error (%luB)", (unsigned long)(elements.length * sizeof(*elements.content)));
 		longjmp(jump_buffer, true);
 	}
 	for (int i = 0; category->lines[i]; i++)
@@ -724,7 +724,7 @@ OsuMap_color	OsuMap_parseLineColor(char *line, char *err_buffer, jmp_buf jump_bu
 	if (strncmp(buffer, &line[i], strlen(buffer)) != 0) {
 		sprintf(
 			err_buffer,
-			"Unsorted list found: %i%s element's number is %i\n",
+			"Unsorted list found: %i%s element's number is %i",
 			nb + 1,
 			buffer[strlen(buffer) - 1] == '1' ? "st" : (
 				buffer[strlen(buffer) - 1] == '2' ? "nd" : (
@@ -765,7 +765,7 @@ OsuMap_colorArray	OsuMap_getCategoryColors(OsuMapCategory *category, char *err_b
 
 	memset(&elements, 0, sizeof(elements));
 	if (!category) {
-		sprintf(err_buffer, "The category \"Colours\" was not found\n");
+		sprintf(err_buffer, "The category \"Colours\" was not found");
 		longjmp(jump_buffer, true);
 	}
 
@@ -773,7 +773,7 @@ OsuMap_colorArray	OsuMap_getCategoryColors(OsuMapCategory *category, char *err_b
 		elements.length += OsuMap_stringStartsWith(category->lines[i], "Combo");
 	elements.content = malloc(elements.length * sizeof(*elements.content));
 	if (!elements.content) {
-		sprintf(err_buffer, "Memory allocation error (%luB)\n", (unsigned long)(elements.length * sizeof(*elements.content)));
+		sprintf(err_buffer, "Memory allocation error (%luB)", (unsigned long)(elements.length * sizeof(*elements.content)));
 		longjmp(jump_buffer, true);
 	}
 	for (int i = 0; category->lines[i]; i++)
@@ -790,14 +790,14 @@ OsuMap_timingPointArray	OsuMap_getCatergoryTimingPoints(OsuMapCategory *category
 
 	memset(&elements, 0, sizeof(elements));
 	if (!category) {
-		sprintf(err_buffer, "The category \"TimingPoints\" was not found\n");
+		sprintf(err_buffer, "The category \"TimingPoints\" was not found");
 		longjmp(jump_buffer, true);
 	}
 
 	for (; category->lines[elements.length]; elements.length++);
 	elements.content = malloc(elements.length * sizeof(*elements.content));
 	if (!elements.content) {
-		sprintf(err_buffer, "Memory allocation error (%luB)\n", (unsigned long)(elements.length * sizeof(*elements.content)));
+		sprintf(err_buffer, "Memory allocation error (%luB)", (unsigned long)(elements.length * sizeof(*elements.content)));
 		longjmp(jump_buffer, true);
 	}
 	for (int i = 0; category->lines[i]; i++) {
@@ -895,7 +895,7 @@ OsuMap	OsuMap_parseMapFile(char *path)
 	//Open file
 	stream = fopen(path, "r");
 	if (!stream) {
-		sprintf(error, "%s: %s\n", path, strerror(errno));
+		sprintf(error, "%s: %s", path, strerror(errno));
 		result.error = error;
 		return result;
 	}
@@ -903,7 +903,7 @@ OsuMap	OsuMap_parseMapFile(char *path)
 	//Create buffer
 	memset(&result, 0, sizeof(result));
 	if (stat(path, &stats) < 0) {
-		sprintf(error, "%s: %s\n", path, strerror(errno));
+		sprintf(error, "%s: %s", path, strerror(errno));
 		result.error = error;
 		return result;
 	}
