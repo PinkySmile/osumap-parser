@@ -154,12 +154,11 @@ OsuMapCategory	*OsuMap_getCategories(char **lines, char *error_buffer, jmp_buf j
 	size_t		currentIndex = 0;
 
 	if (!lines[0]) {
-		categories = malloc(sizeof(*categories));
+		categories = calloc(1, sizeof(*categories));
 		if (!categories) {
 			sprintf(error_buffer, "Memory allocation error (%luB)", (unsigned long)sizeof(*categories));
 			longjmp(jump_buffer, true);
 		}
-		memset(categories, 0, sizeof(*categories));
 	}
 	for (int i = 0; lines[i]; i++)
 		len += (lines[i][0] == '[' || lines[i][strlen(lines[i]) - 1] == ']');
@@ -167,12 +166,11 @@ OsuMapCategory	*OsuMap_getCategories(char **lines, char *error_buffer, jmp_buf j
 		sprintf(error_buffer, "Unexpected line found after header: '%s'", lines[0]);
 		longjmp(jump_buffer, true);
 	}
-	categories = malloc((len + 1) * sizeof(*categories));
+	categories = calloc(len + 1, sizeof(*categories));
 	if (!categories) {
 		sprintf(error_buffer, "Memory allocation error (%luB)", (unsigned long)((len + 1) * sizeof(*categories)));
 		longjmp(jump_buffer, true);
 	}
-	memset(categories, 0, (len + 1) * sizeof(*categories));
 	for (size_t i = 0; lines[i]; currentIndex++) {
 		if (*lines[i] != '[' || lines[i][strlen(lines[i]) - 1] != ']') {
 			sprintf(error_buffer, "Unexpected line found '%s'", lines[i]);
