@@ -780,6 +780,13 @@ OsuMap_colorArray	OsuMap_getCategoryColors(OsuMapCategory *category, char *err_b
 	return elements;
 }
 
+double	OsuMap_getIhnheritTimingPoint(OsuMap_timingPointEvent *array)
+{
+	while (array->inherited)
+		--array;
+	return array->millisecondsPerBeat;
+}
+
 OsuMap_timingPointArray	OsuMap_getCatergoryTimingPoints(OsuMapCategory *category, char *err_buffer, jmp_buf jump_buffer)
 {
 	OsuMap_timingPointArray	elements = {0, NULL};
@@ -804,9 +811,17 @@ OsuMap_timingPointArray	OsuMap_getCatergoryTimingPoints(OsuMapCategory *category
 			elements.content[i].timeToHappen = (unsigned long)OsuMap_getInteger(elems[0], 1, 0, err_buffer, jump_buffer);
 		if (OsuMap_getStringArraySize(elems) > 1) {
 			buffer = OsuMap_getFloat(elems[1], 0, 0, err_buffer, jump_buffer);
-			elements.content[i].inherited = buffer < 0;
-			elements.content[i].millisecondsPerBeat = buffer;
+			elements.content[i].millisecondsPerBeat = buffer < 0 ? (i != 0) * OsuMap_getIhnheritTimingPoint(&elements.content[i - 1]) * (-buffer) / 100 : buffer;
+			elements.content[i].inherited = buffer < 0 && i;
 		}
+		if (OsuMap_getStringArraySize(elems) > 2)
+			elements.content[i].beatPerMeasure = OsuMap_getInteger(elems[2], 0, 0, err_buffer, jump_buffer);
+		if (OsuMap_getStringArraySize(elems) > 3)
+			elements.content[i].sampleSet = OsuMap_getInteger(elems[3], 0, 0, err_buffer, jump_buffer);
+		if (OsuMap_getStringArraySize(elems) > 4)
+			elements.content[i].sampleIndex = OsuMap_getInteger(elems[4], 0, 0, err_buffer, jump_buffer);
+		if (OsuMap_getStringArraySize(elems) > 5)
+			elements.content[i].volume = OsuMap_getInteger(elems[5], 0, 0, err_buffer, jump_buffer);
 		free(elems);
 	}
 	return elements;
