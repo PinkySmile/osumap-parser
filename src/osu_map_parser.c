@@ -211,6 +211,7 @@ unsigned int	OsuMap_getCategoryElementPositiveInteger(char **lines, char *name, 
 		sprintf(err_buffer, "Element '%s' was not found", name);
 		longjmp(jump_buffer, true);
 	}
+	fprintf(stderr, "OsuReplayParser: Warning: %s is not defined\n", name);
 	return 0;
 }
 
@@ -234,6 +235,7 @@ bool	OsuMap_getCategoryElementBoolean(char **lines, char *name, char *err_buffer
 		sprintf(err_buffer, "Element '%s' was not found", name);
 		longjmp(jump_buffer, true);
 	}
+	fprintf(stderr, "OsuReplayParser: Warning: %s is not defined\n", name);
 	return false;
 }
 
@@ -255,6 +257,7 @@ int	OsuMap_getCategoryElementInteger(char **lines, char *name, char *err_buffer,
 		sprintf(err_buffer, "Element '%s' was not found", name);
 		longjmp(jump_buffer, true);
 	}
+	fprintf(stderr, "OsuReplayParser: Warning: %s is not defined\n", name);
 	return 0;
 }
 
@@ -277,6 +280,7 @@ double	OsuMap_getCategoryElementPositiveFloat(char **lines, char *name, char *er
 		sprintf(err_buffer, "Element '%s' was not found", name);
 		longjmp(jump_buffer, true);
 	}
+	fprintf(stderr, "OsuReplayParser: Warning: %s is not defined\n", name);
 	return 0;
 }
 
@@ -298,6 +302,7 @@ double	OsuMap_getCategoryElementFloat(char **lines, char *name, char *err_buffer
 		sprintf(err_buffer, "Element '%s' was not found", name);
 		longjmp(jump_buffer, true);
 	}
+	fprintf(stderr, "OsuReplayParser: Warning: %s is not defined\n", name);
 	return 0;
 }
 
@@ -314,6 +319,7 @@ char	*OsuMap_getCategoryElementRaw(char **lines, char *name, char *err_buffer, j
 		sprintf(err_buffer, "Element '%s' was not found", name);
 		longjmp(jump_buffer, true);
 	}
+	fprintf(stderr, "OsuReplayParser: Warning: %s is not defined\n", name);
 	return NULL;
 }
 
@@ -350,6 +356,7 @@ OsuMap_unsignedIntegerArray	OsuMap_getCategoryElementUIntegerArray(char **lines,
 		sprintf(err_buffer, "Element '%s' was not found", name);
 		longjmp(jump_buffer, true);
 	}
+	fprintf(stderr, "OsuReplayParser: Warning: %s is not defined\n", name);
 	return (OsuMap_unsignedIntegerArray){0, NULL};
 }
 
@@ -366,9 +373,9 @@ OsuMap_generalInfos	OsuMap_getCategoryGeneral(OsuMapCategory *category, char *er
 	infos.audioFileName =		OsuMap_getCategoryElementRaw		(category->lines, "AudioFilename",	err_buffer, jump_buffer, true);
 	infos.audioLeadIn =		OsuMap_getCategoryElementInteger	(category->lines, "AudioLeadIn",	err_buffer, jump_buffer, true);
 	infos.previewTime =		OsuMap_getCategoryElementPositiveInteger(category->lines, "PreviewTime",	err_buffer, jump_buffer, false);
-	infos.countdown =		OsuMap_getCategoryElementBoolean	(category->lines, "Countdown",		err_buffer, jump_buffer, true);
-	infos.hitSoundsSampleSet =	OsuMap_getCategoryElementRaw		(category->lines, "SampleSet",		err_buffer, jump_buffer, true);
-	infos.stackLeniency =		OsuMap_getCategoryElementPositiveFloat	(category->lines, "StackLeniency",	err_buffer, jump_buffer, true);
+	infos.countdown =		OsuMap_getCategoryElementBoolean	(category->lines, "Countdown",		err_buffer, jump_buffer, false);
+	infos.hitSoundsSampleSet =	OsuMap_getCategoryElementRaw		(category->lines, "SampleSet",		err_buffer, jump_buffer, false) ?: "default";
+	infos.stackLeniency =		OsuMap_getCategoryElementPositiveFloat	(category->lines, "StackLeniency",	err_buffer, jump_buffer, false);
 	infos.mode =			OsuMap_getCategoryElementPositiveInteger(category->lines, "Mode",		err_buffer, jump_buffer, true);
 	infos.letterBoxInBreaks =	OsuMap_getCategoryElementBoolean	(category->lines, "LetterboxInBreaks",	err_buffer, jump_buffer, false);
 	infos.widescreenStoryboard =	OsuMap_getCategoryElementBoolean	(category->lines, "WidescreenStoryboard",err_buffer,jump_buffer, false);
@@ -406,14 +413,14 @@ OsuMap_metaData	OsuMap_getCategoryMetaData(OsuMapCategory *category, char *err_b
 		longjmp(jump_buffer, true);
 	}
 
-	infos.title =		OsuMap_getCategoryElementRaw		(category->lines, "Title",		err_buffer, jump_buffer, true);
+	infos.title =		OsuMap_getCategoryElementRaw		(category->lines, "Title",		err_buffer, jump_buffer, false);
 	infos.unicodeTitle =	OsuMap_getCategoryElementRaw		(category->lines, "TitleUnicode",	err_buffer, jump_buffer, false);
-	infos.artist =		OsuMap_getCategoryElementRaw		(category->lines, "Artist",		err_buffer, jump_buffer, true);
+	infos.artist =		OsuMap_getCategoryElementRaw		(category->lines, "Artist",		err_buffer, jump_buffer, false);
 	infos.artistUnicode =	OsuMap_getCategoryElementRaw		(category->lines, "ArtistUnicode",	err_buffer, jump_buffer, false);
-	infos.creator =		OsuMap_getCategoryElementRaw		(category->lines, "Creator",		err_buffer, jump_buffer, true);
-	infos.difficulty =	OsuMap_getCategoryElementRaw		(category->lines, "Version",		err_buffer, jump_buffer, true);
-	infos.musicOrigin =	OsuMap_getCategoryElementRaw		(category->lines, "Source",		err_buffer, jump_buffer, true);
-	infos.tags =		OsuMap_splitString(OsuMap_getCategoryElementRaw(category->lines, "Tags",	err_buffer, jump_buffer, true), ' ', err_buffer, jump_buffer);
+	infos.creator =		OsuMap_getCategoryElementRaw		(category->lines, "Creator",		err_buffer, jump_buffer, false);
+	infos.difficulty =	OsuMap_getCategoryElementRaw		(category->lines, "Version",		err_buffer, jump_buffer, false);
+	infos.musicOrigin =	OsuMap_getCategoryElementRaw		(category->lines, "Source",		err_buffer, jump_buffer, false);
+	infos.tags =		OsuMap_splitString(OsuMap_getCategoryElementRaw(category->lines, "Tags",	err_buffer, jump_buffer, false), ' ', err_buffer, jump_buffer);
 	infos.beatmapID =	OsuMap_getCategoryElementPositiveInteger(category->lines, "BeatmapID",		err_buffer, jump_buffer, false);
 	infos.beatmapSetID =	OsuMap_getCategoryElementPositiveInteger(category->lines, "BeatmapSetID",	err_buffer, jump_buffer, false);
 	return infos;
@@ -808,7 +815,7 @@ OsuMap_timingPointArray	OsuMap_getCatergoryTimingPoints(OsuMapCategory *category
 	for (int i = 0; category->lines[i]; i++) {
 		elems = OsuMap_splitString(category->lines[i], ',', err_buffer, jump_buffer);
 		if (OsuMap_getStringArraySize(elems) > 0)
-			elements.content[i].timeToHappen = (unsigned long)OsuMap_getFloat(elems[0], 1, 0, err_buffer, jump_buffer);
+			elements.content[i].timeToHappen = (unsigned long)OsuMap_getFloat(elems[0], 0, 0, err_buffer, jump_buffer);
 		if (OsuMap_getStringArraySize(elems) > 1) {
 			buffer = OsuMap_getFloat(elems[1], 0, 0, err_buffer, jump_buffer);
 			elements.content[i].millisecondsPerBeat = buffer < 0 ? (i != 0) * OsuMap_getIhnheritTimingPoint(&elements.content[i - 1]) * (-buffer) / 100 : buffer;
