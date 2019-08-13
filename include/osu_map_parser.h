@@ -173,6 +173,12 @@ typedef struct OsuMap_hitObjectArray {
 	OsuMap_hitObject	*content;
 } OsuMap_hitObjectArray;
 
+typedef struct OsuMap_StoryBoard {
+	char			*backgroundPath;
+	char			*videoPath;
+	OsuMap_storyboardArray	storyboardEvents;
+} OsuMap_storyBoard;
+
 typedef struct OsuMap {
 	char			*error;
 	unsigned int		fileVersion;
@@ -180,9 +186,8 @@ typedef struct OsuMap {
 	OsuMap_editorInfos	editorInfos;
 	OsuMap_metaData		metaData;
 	OsuMap_difficultyInfos	difficulty;
-	char			*backgroundPath;
 	OsuIntegerVector	*breaks;
-	OsuMap_storyboardArray	storyboardEvents;
+	OsuMap_storyBoard	storyBoard;
 	OsuMap_timingPointArray	timingPoints;
 	OsuMap_colorArray	colors;
 	OsuMap_hitObjectArray	hitObjects;

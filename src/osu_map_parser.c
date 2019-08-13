@@ -834,18 +834,31 @@ OsuMap_timingPointArray	OsuMap_getCatergoryTimingPoints(OsuMapCategory *category
 	return elements;
 }
 
-char	*OsuMap_getBackgroundPath(OsuMapCategory *category, char *err_buffer, jmp_buf jump_buffer)
+OsuMap_storyBoard	OsuMap_getStoryBoard(OsuMapCategory *category, char *err_buffer, jmp_buf jump_buffer)
 {
-	char	*result;
-	char	**elems = category->lines[0] ? OsuMap_splitString(category->lines[0], ',', err_buffer, jump_buffer) : NULL;
+	OsuMap_storyBoard	result;
 
-	if (!elems || OsuMap_getStringArraySize(elems) < 3)
-		return free(elems), NULL;
-	result = elems[2];
-	free(elems);
-	if (*result != '"' || result[strlen(result) - 1] != '"')
-		return NULL;
-	return result + 1;
+	memset(&result, 0, sizeof(result));
+	for (int i = 0; category->lines[i]; i++) {
+		char	**elems = OsuMap_splitString(category->lines[i], ',', err_buffer, jump_buffer);
+
+		if (OsuMap_getStringArraySize(elems) >= 3) {
+			if (strcmp(elems[0], "Video") == 0) {
+				if (*elems[2] == '"' && elems[2][strlen(elems[2]) - 1] == '"') {
+					free(result.videoPath);
+					result.videoPath = strdup(elems[2] + 1);
+					result.videoPath[strlen(result.videoPath) - 1] = '\0';
+				}
+			} else if (strcmp(elems[0], "0") == 0 && !result.backgroundPath) {
+				if (*elems[2] == '"' && elems[2][strlen(elems[2]) - 1] == '"') {
+					result.backgroundPath = strdup(elems[2] + 1);
+					result.backgroundPath[strlen(result.backgroundPath) - 1] = '\0';
+				}
+			}
+		}
+		free(elems);
+	}
+	return result;
 }
 
 OsuMapCategory	*OsuMap_getCategory(OsuMapCategory *categories, char *name)
@@ -893,7 +906,7 @@ OsuMap	OsuMap_parseMapString(char *string)
 	result.hitObjects = OsuMap_getCategoryHitObject		(OsuMap_getCategory(categories, "HitObjects"),	error, jump_buffer);
 	result.colors = OsuMap_getCategoryColors		(OsuMap_getCategory(categories, "Colours"),	error, jump_buffer);
 	result.timingPoints = OsuMap_getCatergoryTimingPoints	(OsuMap_getCategory(categories, "TimingPoints"),error, jump_buffer);
-	result.backgroundPath = OsuMap_getBackgroundPath	(OsuMap_getCategory(categories, "Events"),	error, jump_buffer);
+	result.storyBoard = OsuMap_getStoryBoard		(OsuMap_getCategory(categories, "Events"),	error, jump_buffer);
 
 	for (int i = 0; categories && categories[i].lines; i++)
 		free(categories[i].lines);
