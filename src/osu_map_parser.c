@@ -923,7 +923,7 @@ OsuMapCategory	*OsuMap_getCategory(OsuMapCategory *categories, char *name)
 	return NULL;
 }
 
-OsuMap	OsuMap_parseMapString(char *string)
+OsuMap	OsuMap_parseMapString(const char *string)
 {
 	OsuMap		result;
 	static	char	error[PATH_MAX + 1024];
@@ -945,7 +945,8 @@ OsuMap	OsuMap_parseMapString(char *string)
 	}
 
 	memset(&result, 0, sizeof(result));
-	lines = OsuMap_splitString(strdup(string), '\n', error, jump_buffer);
+	result.__str = strdup(string);
+	lines = OsuMap_splitString(result.__str, '\n', error, jump_buffer);
 	OsuMap_deleteEmptyLines(lines);
 
 	result.fileVersion = OsuMap_parseHeader(lines[0], error, jump_buffer);
@@ -968,7 +969,7 @@ OsuMap	OsuMap_parseMapString(char *string)
 	return result;
 }
 
-OsuMap	OsuMap_parseMapFile(char *path)
+OsuMap	OsuMap_parseMapFile(const char *path)
 {
 	size_t		size = 0;
 	struct stat	stats;
@@ -1010,9 +1011,21 @@ OsuMap	OsuMap_parseMapFile(char *path)
 	//Parse content
 	result = OsuMap_parseMapString(buffer);
 	if (result.error) {
-		sprintf(error, "An error occured when parsing %s:\n%s", path, result.error);
+		sprintf(error, "An error occurred when parsing %s:\n%s", path, result.error);
 		result.error = error;
 		return result;
 	}
 	return result;
+}
+
+void OsuMap_destroy(OsuMap *map)
+{
+	free(map->__str);
+	free(map->metaData.tags);
+	free(map->colors.content);
+	free(map->hitObjects.content);
+	free(map->timingPoints.content);
+	free(map->editorInfos.bookmarks.content);
+	free(map->storyBoard.storyboardEvents.content);
+	free(map->breaks);
 }

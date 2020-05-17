@@ -181,6 +181,7 @@ typedef struct OsuMap_StoryBoard {
 } OsuMap_storyBoard;
 
 typedef struct OsuMap {
+	char			*__str;
 	char			*error;
 	unsigned int		fileVersion;
 	OsuMap_generalInfos	generalInfos;
@@ -194,7 +195,8 @@ typedef struct OsuMap {
 	OsuMap_hitObjectArray	hitObjects;
 } OsuMap;
 
-OsuMap	OsuMap_parseMapString(char *string);
-OsuMap	OsuMap_parseMapFile(char *path);
+OsuMap	OsuMap_parseMapString(const char *string);
+OsuMap	OsuMap_parseMapFile(const char *path);
+void OsuMap_destroy(OsuMap *map);
 
 #endif //OSUMAP_PARSER_LIBRARY_H
