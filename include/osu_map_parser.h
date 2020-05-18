@@ -32,9 +32,10 @@ enum OsuHitObjectType {
 };
 
 enum OsuHitSounds {
-	HIT_WHISTLE	= 1 << 1,
-	HIT_FINISH	= 1 << 2,
-	HIT_CLAP	= 1 << 3,
+	HIT_NORMAL  = 1 << 0,
+	HIT_WHISTLE = 1 << 1,
+	HIT_FINISH  = 1 << 2,
+	HIT_CLAP    = 1 << 3,
 };
 
 typedef struct OsuIntegerVector {
