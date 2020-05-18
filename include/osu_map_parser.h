@@ -20,14 +20,15 @@ enum OsuGameMode {
 #endif
 
 enum OsuHitObjectType {
-	HITOBJ_CIRCLE		= 1 << 0,
-	HITOBJ_SLIDER		= 1 << 1,
-	HITOBJ_NEW_COMBO	= 1 << 2,
-	HITOBJ_SPINNER		= 1 << 3,
-	HITOBJ_NBR1		= 1 << 4,
-	HITOBJ_NBR2		= 1 << 5,
-	HITOBJ_NBR3		= 1 << 6,
-	HITOBJ_MANIA_LONG_NOTE	= 1 << 7,
+	HITOBJ_CIRCLE          = 1 << 0,
+	HITOBJ_SLIDER          = 1 << 1,
+	HITOBJ_NEW_COMBO       = 1 << 2,
+	HITOBJ_SPINNER         = 1 << 3,
+	HITOBJ_NBR1            = 1 << 4,
+	HITOBJ_NBR2            = 1 << 5,
+	HITOBJ_NBR3            = 1 << 6,
+	HITOBJ_COLOR_SKIP_NBR  = HITOBJ_NBR1 | HITOBJ_NBR2 | HITOBJ_NBR3,
+	HITOBJ_MANIA_LONG_NOTE = 1 << 7,
 };
 
 enum OsuHitSounds {
