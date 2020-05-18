@@ -941,6 +941,8 @@ OsuMap	OsuMap_parseMapString(const char *string)
 			free(categories[i].lines);
 		free(categories);
 		free(lines);
+		free(result.__str);
+		result.__str = NULL;
 		return result;
 	}
 
@@ -1023,6 +1025,8 @@ void OsuMap_destroy(OsuMap *map)
 	free(map->__str);
 	free(map->metaData.tags);
 	free(map->colors.content);
+	for (unsigned i = 0; i < map->hitObjects.length; i++)
+		free(map->hitObjects.content[i].additionalInfos);
 	free(map->hitObjects.content);
 	free(map->timingPoints.content);
 	free(map->editorInfos.bookmarks.content);
