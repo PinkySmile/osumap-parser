@@ -225,7 +225,7 @@ unsigned int	OsuMap_getCategoryElementPositiveInteger(char **lines, char *name, 
 		sprintf(err_buffer, "Element '%s' was not found", name);
 		longjmp(jump_buffer, true);
 	}
-	fprintf(stderr, "OsuReplayParser: Warning: %s is not defined\n", name);
+	fprintf(stderr, "OsuMapParser: Warning: %s is not defined\n", name);
 	return 0;
 }
 
@@ -255,7 +255,7 @@ bool	OsuMap_getCategoryElementBoolean(char **lines, char *name, char *err_buffer
 		sprintf(err_buffer, "Element '%s' was not found", name);
 		longjmp(jump_buffer, true);
 	}
-	fprintf(stderr, "OsuReplayParser: Warning: %s is not defined\n", name);
+	fprintf(stderr, "OsuMapParser: Warning: %s is not defined\n", name);
 	return false;
 }
 
@@ -283,7 +283,7 @@ int	OsuMap_getCategoryElementInteger(char **lines, char *name, char *err_buffer,
 		sprintf(err_buffer, "Element '%s' was not found", name);
 		longjmp(jump_buffer, true);
 	}
-	fprintf(stderr, "OsuReplayParser: Warning: %s is not defined\n", name);
+	fprintf(stderr, "OsuMapParser: Warning: %s is not defined\n", name);
 	return 0;
 }
 
@@ -312,7 +312,7 @@ double	OsuMap_getCategoryElementPositiveFloat(char **lines, char *name, char *er
 		sprintf(err_buffer, "Element '%s' was not found", name);
 		longjmp(jump_buffer, true);
 	}
-	fprintf(stderr, "OsuReplayParser: Warning: %s is not defined\n", name);
+	fprintf(stderr, "OsuMapParser: Warning: %s is not defined\n", name);
 	return 0;
 }
 
@@ -340,7 +340,7 @@ double	OsuMap_getCategoryElementFloat(char **lines, char *name, char *err_buffer
 		sprintf(err_buffer, "Element '%s' was not found", name);
 		longjmp(jump_buffer, true);
 	}
-	fprintf(stderr, "OsuReplayParser: Warning: %s is not defined\n", name);
+	fprintf(stderr, "OsuMapParser: Warning: %s is not defined\n", name);
 	return 0;
 }
 
@@ -364,7 +364,7 @@ char	*OsuMap_getCategoryElementRaw(char **lines, char *name, char *err_buffer, j
 		sprintf(err_buffer, "Element '%s' was not found", name);
 		longjmp(jump_buffer, true);
 	}
-	fprintf(stderr, "OsuReplayParser: Warning: %s is not defined\n", name);
+	fprintf(stderr, "OsuMapParser: Warning: %s is not defined\n", name);
 	return NULL;
 }
 
@@ -407,7 +407,7 @@ OsuMap_unsignedIntegerArray	OsuMap_getCategoryElementUIntegerArray(char **lines,
 		sprintf(err_buffer, "Element '%s' was not found", name);
 		longjmp(jump_buffer, true);
 	}
-	fprintf(stderr, "OsuReplayParser: Warning: %s is not defined\n", name);
+	fprintf(stderr, "OsuMapParser: Warning: %s is not defined\n", name);
 	return (OsuMap_unsignedIntegerArray){0, NULL};
 }
 
