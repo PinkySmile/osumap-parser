@@ -871,7 +871,7 @@ OsuMap_timingPointArray	OsuMap_getCatergoryTimingPoints(OsuMapCategory *category
 			elements.content[i].timeToHappen = (unsigned long)OsuMap_getFloat(elems[0], 0, 0, err_buffer, jump_buffer);
 		if (OsuMap_getStringArraySize(elems) > 1) {
 			buffer = OsuMap_getFloat(elems[1], 0, 0, err_buffer, jump_buffer);
-			elements.content[i].millisecondsPerBeat = buffer < 0 ? (i != 0) * OsuMap_getIhnheritTimingPoint(&elements.content[i - 1]) * (-buffer) / 100 : buffer;
+			elements.content[i].millisecondsPerBeat = buffer < 0 ? (i != 0) * OsuMap_getIhnheritTimingPoint(&elements.content[i - 1]) * 100 / (-buffer) : buffer;
 			elements.content[i].inherited = buffer < 0 && i;
 		}
 		if (OsuMap_getStringArraySize(elems) > 2)
