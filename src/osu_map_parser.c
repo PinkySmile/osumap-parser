@@ -840,7 +840,7 @@ OsuMap_colorArray	OsuMap_getCategoryColors(OsuMapCategory *category, char *err_b
 	return elements;
 }
 
-double	OsuMap_getIhnheritTimingPoint(OsuMap_timingPointEvent *array)
+double OsuMap_getIhnheritTimingPoint(OsuMap_timingPointEvent *array)
 {
 	while (array->inherited)
 		--array;
@@ -871,7 +871,10 @@ OsuMap_timingPointArray	OsuMap_getCatergoryTimingPoints(OsuMapCategory *category
 			elements.content[i].timeToHappen = (unsigned long)OsuMap_getFloat(elems[0], 0, 0, err_buffer, jump_buffer);
 		if (OsuMap_getStringArraySize(elems) > 1) {
 			buffer = OsuMap_getFloat(elems[1], 0, 0, err_buffer, jump_buffer);
-			elements.content[i].millisecondsPerBeat = buffer < 0 ? (i != 0) * OsuMap_getIhnheritTimingPoint(&elements.content[i - 1]) * 100 / (-buffer) : buffer;
+			if (i != 0 && buffer < 0)
+				elements.content[i].millisecondsPerBeat = OsuMap_getIhnheritTimingPoint(&elements.content[i - 1]) * (-buffer) / 100;
+			else
+				elements.content[i].millisecondsPerBeat = buffer;
 			elements.content[i].inherited = buffer < 0 && i;
 		}
 		if (OsuMap_getStringArraySize(elems) > 2)
