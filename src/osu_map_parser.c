@@ -421,19 +421,19 @@ OsuMap_generalInfos	OsuMap_getCategoryGeneral(OsuMapCategory *category, char *er
 		longjmp(jump_buffer, true);
 	}
 
-	infos.audioFileName =		OsuMap_getCategoryElementRaw		(category->lines, "AudioFilename",	err_buffer, jump_buffer, true);
-	infos.audioLeadIn =		OsuMap_getCategoryElementInteger	(category->lines, "AudioLeadIn",	err_buffer, jump_buffer, true);
-	infos.previewTime =		OsuMap_getCategoryElementPositiveInteger(category->lines, "PreviewTime",	err_buffer, jump_buffer, false);
-	infos.countdown =		OsuMap_getCategoryElementBoolean	(category->lines, "Countdown",		err_buffer, jump_buffer, false);
-	infos.hitSoundsSampleSet =	OsuMap_getCategoryElementRaw		(category->lines, "SampleSet",		err_buffer, jump_buffer, false);
+	infos.audioFileName =		OsuMap_getCategoryElementRaw	(category->lines, "AudioFilename",err_buffer, jump_buffer, true);
+	infos.audioLeadIn =		OsuMap_getCategoryElementInteger(category->lines, "AudioLeadIn",	err_buffer, jump_buffer, true);
+	infos.previewTime =		OsuMap_getCategoryElementInteger(category->lines, "PreviewTime",	err_buffer, jump_buffer, false);
+	infos.countdown =		OsuMap_getCategoryElementBoolean(category->lines, "Countdown",	err_buffer, jump_buffer, false);
+	infos.hitSoundsSampleSet =	OsuMap_getCategoryElementRaw	(category->lines, "SampleSet",	err_buffer, jump_buffer, false);
 	if (!infos.hitSoundsSampleSet)
 		infos.hitSoundsSampleSet = "default";
 	infos.stackLeniency =		OsuMap_getCategoryElementPositiveFloat	(category->lines, "StackLeniency",	err_buffer, jump_buffer, false);
-	infos.mode =			OsuMap_getCategoryElementPositiveInteger(category->lines, "Mode",		err_buffer, jump_buffer, true);
+	infos.mode =			OsuMap_getCategoryElementPositiveInteger(category->lines, "Mode",			err_buffer, jump_buffer, true);
 	infos.letterBoxInBreaks =	OsuMap_getCategoryElementBoolean	(category->lines, "LetterboxInBreaks",	err_buffer, jump_buffer, false);
-	infos.widescreenStoryboard =	OsuMap_getCategoryElementBoolean	(category->lines, "WidescreenStoryboard",err_buffer,jump_buffer, false);
+	infos.widescreenStoryboard =	OsuMap_getCategoryElementBoolean	(category->lines, "WidescreenStoryboard",	err_buffer,jump_buffer, false);
 	infos.storyFireInFront =	OsuMap_getCategoryElementBoolean	(category->lines, "StoryFireInFront",	err_buffer, jump_buffer, false);
-	infos.specialStyle =		OsuMap_getCategoryElementBoolean	(category->lines, "SpecialStyle",	err_buffer, jump_buffer, false);
+	infos.specialStyle =		OsuMap_getCategoryElementBoolean	(category->lines, "SpecialStyle",		err_buffer, jump_buffer, false);
 	infos.epilepsyWarning =		OsuMap_getCategoryElementBoolean	(category->lines, "EpilepsyWarning",	err_buffer, jump_buffer, false);
 	infos.useSkinSprites =		OsuMap_getCategoryElementBoolean	(category->lines, "UseSkinSprites",	err_buffer, jump_buffer, false);
 
