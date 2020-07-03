@@ -431,7 +431,7 @@ OsuMap_generalInfos	OsuMap_getCategoryGeneral(OsuMapCategory *category, char *er
 	infos.stackLeniency =		OsuMap_getCategoryElementPositiveFloat	(category->lines, "StackLeniency",	err_buffer, jump_buffer, false);
 	infos.mode =			OsuMap_getCategoryElementPositiveInteger(category->lines, "Mode",			err_buffer, jump_buffer, true);
 	infos.letterBoxInBreaks =	OsuMap_getCategoryElementBoolean	(category->lines, "LetterboxInBreaks",	err_buffer, jump_buffer, false);
-	infos.widescreenStoryboard =	OsuMap_getCategoryElementBoolean	(category->lines, "WidescreenStoryboard",	err_buffer,jump_buffer, false);
+	infos.widescreenStoryboard =	OsuMap_getCategoryElementBoolean	(category->lines, "WidescreenStoryboard",	err_buffer, jump_buffer, false);
 	infos.storyFireInFront =	OsuMap_getCategoryElementBoolean	(category->lines, "StoryFireInFront",	err_buffer, jump_buffer, false);
 	infos.specialStyle =		OsuMap_getCategoryElementBoolean	(category->lines, "SpecialStyle",		err_buffer, jump_buffer, false);
 	infos.epilepsyWarning =		OsuMap_getCategoryElementBoolean	(category->lines, "EpilepsyWarning",	err_buffer, jump_buffer, false);
