@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.19)
 
 project(
 	osumap_parser
+	DESCRIPTION "A .osu file parsing library in C"
 	LANGUAGES C
 	VERSION 0.0.1
 )
