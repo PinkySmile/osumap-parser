@@ -20,28 +20,28 @@ enum OsuGameMode {
 #endif
 
 enum OsuHitObjectType {
-	HITOBJ_CIRCLE          = 1 << 0,
-	HITOBJ_SLIDER          = 1 << 1,
-	HITOBJ_NEW_COMBO       = 1 << 2,
-	HITOBJ_SPINNER         = 1 << 3,
-	HITOBJ_NBR1            = 1 << 4,
-	HITOBJ_NBR2            = 1 << 5,
-	HITOBJ_NBR3            = 1 << 6,
+	HITOBJ_CIRCLE          = 1U << 0U,
+	HITOBJ_SLIDER          = 1U << 1U,
+	HITOBJ_NEW_COMBO       = 1U << 2U,
+	HITOBJ_SPINNER         = 1U << 3U,
+	HITOBJ_NBR1            = 1U << 4U,
+	HITOBJ_NBR2            = 1U << 5U,
+	HITOBJ_NBR3            = 1U << 6U,
 	HITOBJ_COLOR_SKIP_NBR  = HITOBJ_NBR1 | HITOBJ_NBR2 | HITOBJ_NBR3,
-	HITOBJ_MANIA_LONG_NOTE = 1 << 7,
+	HITOBJ_MANIA_LONG_NOTE = 1U << 7U,
 };
 
 enum OsuHitSounds {
-	HIT_NORMAL  = 1 << 0,
-	HIT_WHISTLE = 1 << 1,
-	HIT_FINISH  = 1 << 2,
-	HIT_CLAP    = 1 << 3,
+	HIT_NORMAL  = 1U << 0U,
+	HIT_WHISTLE = 1U << 1U,
+	HIT_FINISH  = 1U << 2U,
+	HIT_CLAP    = 1U << 3U,
 };
 
-typedef struct OsuIntegerVector {
-	int	x;
-	int	y;
-} OsuIntegerVector;
+typedef struct OsuLongVector {
+	long	x;
+	long	y;
+} OsuLongVector;
 
 typedef struct OsuMap_integerArray {
 	size_t		length;
@@ -67,7 +67,7 @@ typedef struct OsuMap_generalInfos {
 typedef struct OsuMap_editorInfos {
 	OsuMap_unsignedIntegerArray	bookmarks;
 	double				distanceSpacing;
-	int				beatDivision;
+	double				beatDivision;
 	int				gridSize;
 	double				timeLineZoom;
 } OsuMap_editorInfos;
@@ -148,14 +148,14 @@ typedef struct OsuMap_hitObjectAddition {
 	char			*fileName;
 } OsuMap_hitObjectAddition;
 
-typedef struct OsuIntegerVectorArray {
+typedef struct OsuLongVectorArray {
 	size_t		length;
-	OsuIntegerVector*content;
-} OsuIntegerVectorArray;
+	OsuLongVector	*content;
+} OsuLongVectorArray;
 
 typedef struct OsuMap_hitObjectSliderInfos {
 	char			type;
-	OsuIntegerVectorArray	curvePoints;
+	OsuLongVectorArray	curvePoints;
 	unsigned int		nbOfRepeats;
 	double			pixelLength;
 	unsigned char		*edgeHitsounds;
@@ -163,7 +163,7 @@ typedef struct OsuMap_hitObjectSliderInfos {
 } OsuMap_hitObjectSliderInfos;
 
 typedef struct OsuMap_hitObject {
-	OsuIntegerVector		position;
+	OsuLongVector			position;
 	unsigned long			timeToAppear;
 	unsigned char			type;
 	unsigned char			hitSound;
@@ -190,7 +190,7 @@ typedef struct OsuMap {
 	OsuMap_editorInfos	editorInfos;
 	OsuMap_metaData		metaData;
 	OsuMap_difficultyInfos	difficulty;
-	OsuIntegerVector	*breaks;
+	OsuLongVector		*breaks;
 	OsuMap_storyBoard	storyBoard;
 	OsuMap_timingPointArray	timingPoints;
 	OsuMap_colorArray	colors;
