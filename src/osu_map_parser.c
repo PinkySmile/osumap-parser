@@ -215,10 +215,10 @@ unsigned int	OsuMap_getCategoryElementPositiveInteger(char **lines, char *name, 
 			free(buffer);
 			if (OsuMap_isPositiveInteger(lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '))) {
 				return atoi(lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
-			} else {
-				sprintf(err_buffer, "Element '%s' expects a positive integer (but was %s)", name, lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
-				longjmp(jump_buffer, true);
 			}
+
+			sprintf(err_buffer, "Element '%s' expects a positive integer (but was %s)", name, lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
+			longjmp(jump_buffer, true);
 		}
 	free(buffer);
 	if (jump) {
@@ -273,10 +273,9 @@ int	OsuMap_getCategoryElementInteger(char **lines, char *name, char *err_buffer,
 			free(buffer);
 			if (OsuMap_isInteger(lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' ')))
 				return atoi(lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
-			else {
-				sprintf(err_buffer, "Element '%s' expects an integer (but was %s)", name, lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
-				longjmp(jump_buffer, true);
-			}
+
+			sprintf(err_buffer, "Element '%s' expects an integer (but was %s)", name, lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
+			longjmp(jump_buffer, true);
 		}
 	free(buffer);
 	if (jump) {
@@ -301,11 +300,9 @@ double	OsuMap_getCategoryElementPositiveFloat(char **lines, char *name, char *er
 			free(buffer);
 			if (OsuMap_isPositiveFloat(lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' ')))
 				return atof(lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
-			else {
-				sprintf(err_buffer, "Element '%s' expects a positive floating number (but was %s)",
-					name, lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
-				longjmp(jump_buffer, true);
-			}
+			sprintf(err_buffer, "Element '%s' expects a positive floating number (but was %s)",
+				name, lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
+			longjmp(jump_buffer, true);
 		}
 	free(buffer);
 	if (jump) {
@@ -330,10 +327,9 @@ double	OsuMap_getCategoryElementFloat(char **lines, char *name, char *err_buffer
 			free(buffer);
 			if (OsuMap_isFloat(lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' ')))
 				return atof(lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
-			else {
-				sprintf(err_buffer, "Element '%s' expects a floating number (but was %s)", name, lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
-				longjmp(jump_buffer, true);
-			}
+
+			sprintf(err_buffer, "Element '%s' expects a floating number (but was %s)", name, lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
+			longjmp(jump_buffer, true);
 		}
 	free(buffer);
 	if (jump) {
