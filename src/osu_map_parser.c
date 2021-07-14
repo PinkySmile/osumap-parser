@@ -28,8 +28,8 @@ size_t	OsuMap_getStringArraySize(char **elems)
 
 char	**OsuMap_splitString(char *str, char separator, char *error_buffer, jmp_buf jump_buffer)
 {
-	void	*buffer;
-	char	**array;
+	void	*buffer = NULL;
+	char	**array = NULL;
 	size_t	size = 1;
 
 	array = malloc(2 * sizeof(*array));
@@ -366,7 +366,7 @@ char	*OsuMap_getCategoryElementRaw(char **lines, char *name, char *err_buffer, j
 
 OsuMap_unsignedIntegerArray	OsuMap_getCategoryElementUIntegerArray(char **lines, char *name, char *err_buffer, jmp_buf jump_buffer, bool jump)
 {
-	char				**values;
+	char				**values = NULL;
 	OsuMap_unsignedIntegerArray	result = {0, NULL};
 	char	*buffer = malloc(strlen(name) + 3);
 
@@ -498,7 +498,7 @@ OsuMap_difficultyInfos	OsuMap_getCategoryDifficulty(OsuMapCategory *category, ch
 
 long	OsuMap_getInteger(char *nbr, int min, int max, char *err_buffer, jmp_buf jump_buffer)
 {
-	char	*end;
+	char	*end = NULL;
 	long	result = nbr ? strtol(nbr, &end, 10) : 0;
 
 	if (!nbr || *end) {
@@ -522,7 +522,7 @@ long	OsuMap_getInteger(char *nbr, int min, int max, char *err_buffer, jmp_buf ju
 
 double	OsuMap_getFloat(char *nbr, double min, double max, char *err_buffer, jmp_buf jump_buffer)
 {
-	char	*end;
+	char	*end = NULL;
 	double	result = nbr ? strtof(nbr, &end) : 0;
 
 	if (!nbr || *end) {
@@ -612,8 +612,8 @@ bool	Osumap_isInString(char c, char const *str)
 OsuMap_hitObjectSliderInfos	OsuMap_getSliderInfos(char **elems, char *err_buffer, jmp_buf jump_buffer)
 {
 	OsuMap_hitObjectSliderInfos	infos;
-	char				**nbr;
-	char				**buffer;
+	char				**nbr = NULL;
+	char				**buffer = NULL;
 
 	memset(&infos, 0, sizeof(infos));
 	infos.type = *elems[0];
@@ -767,10 +767,10 @@ OsuMap_hitObjectArray	OsuMap_getCategoryHitObject(OsuMapCategory *category, char
 
 OsuMap_color	OsuMap_parseLineColor(char *line, char *err_buffer, jmp_buf jump_buffer, int nb)
 {
-	OsuMap_color	 color;
+	OsuMap_color	color;
 	char		buffer[11];
 	int		i = 5;
-	char		**elems;
+	char		**elems = NULL;
 
 	sprintf(buffer, "%i", nb + 1);
 	if (strncmp(buffer, &line[i], strlen(buffer)) != 0) {
@@ -844,8 +844,8 @@ double OsuMap_getIhnheritTimingPoint(OsuMap_timingPointEvent *array)
 OsuMap_timingPointArray	OsuMap_getCatergoryTimingPoints(OsuMapCategory *category, char *err_buffer, jmp_buf jump_buffer)
 {
 	OsuMap_timingPointArray	elements = {0, NULL};
-	char			**elems;
-	double			buffer;
+	char			**elems = NULL;
+	double			buffer = 0;
 
 	memset(&elements, 0, sizeof(elements));
 	if (!category) {
@@ -974,9 +974,9 @@ OsuMap	OsuMap_parseMapFile(const char *path)
 	struct stat	stats;
 	OsuMap		result;
 	static	char	error[PATH_MAX + 1024];
-	FILE		*stream;
-	int		fd;
-	char		*buffer;
+	FILE		*stream = NULL;
+	int		fd = 0;
+	char		*buffer = NULL;
 
 	// Open file.
 	stream = fopen(path, "r");
