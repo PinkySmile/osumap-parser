@@ -929,7 +929,7 @@ OsuMap	OsuMap_parseMapString(const char *string)
 	OsuMapCategory	*categories = NULL;
 	jmp_buf		jump_buffer;
 
-	//Init the error handler
+	// Initialize the error handler.
 	if (setjmp(jump_buffer)) {
 		strcpy(buffer, error);
 		sprintf(error, "An error occurred when parsing string:\n%s", buffer);
@@ -978,7 +978,7 @@ OsuMap	OsuMap_parseMapFile(const char *path)
 	int		fd;
 	char		*buffer;
 
-	//Open file
+	// Open file.
 	stream = fopen(path, "r");
 	if (!stream) {
 		sprintf(error, "%s: %s", path, strerror(errno));
@@ -986,7 +986,7 @@ OsuMap	OsuMap_parseMapFile(const char *path)
 		return result;
 	}
 
-	//Create buffer
+	// Create buffer.
 	memset(&result, 0, sizeof(result));
 	if (stat(path, &stats) < 0) {
 		sprintf(error, "%s: %s", path, strerror(errno));
@@ -1002,12 +1002,12 @@ OsuMap	OsuMap_parseMapFile(const char *path)
 		return result;
 	}
 
-	//Read file
+	// Read file.
 	fd = fileno(stream);
 	buffer[read(fd, buffer, size)] = 0;
 	fclose(stream);
 
-	//Parse content
+	// Parse content.
 	result = OsuMap_parseMapString(buffer);
 	if (result.error) {
 		sprintf(error, "An error occurred when parsing %s:\n%s", path, result.error);

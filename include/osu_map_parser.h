@@ -95,8 +95,8 @@ typedef struct OsuMap_difficultyInfos {
 } OsuMap_difficultyInfos;
 
 typedef struct OsuMap_storyboardEvent {
-	int i; //Just so MSVC is happy
-	//TODO: Create storyboard struct
+	int i; // Just so that MSVC is happy.
+	// TODO: Create storyboard struct.
 } OsuMap_storyboardEvent;
 
 typedef struct OsuMap_storyboardArray {
