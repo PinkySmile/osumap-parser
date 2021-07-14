@@ -923,7 +923,7 @@ OsuMapCategory	*OsuMap_getCategory(OsuMapCategory *categories, char *name)
 OsuMap	OsuMap_parseMapString(const char *string)
 {
 	OsuMap		result;
-	static	char	error[PATH_MAX + 1024];
+	static	char	error[PATH_MAX + 1024 + 39]; // Additional 39 bytes are here to fit the error string below.
 	char		buffer[PATH_MAX + 1024];
 	char		**lines = NULL;
 	OsuMapCategory	*categories = NULL;
