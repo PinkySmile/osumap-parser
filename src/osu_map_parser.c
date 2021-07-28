@@ -28,13 +28,13 @@ size_t	OsuMap_getStringArraySize(char **elems)
 
 char	**OsuMap_splitString(char *str, char separator, char *error_buffer, jmp_buf jump_buffer)
 {
-	void	*buffer;
-	char	**array;
+	void	*buffer = NULL;
+	char	**array = NULL;
 	size_t	size = 1;
 
 	array = malloc(2 * sizeof(*array));
 	if (!array){
-		sprintf(error_buffer, "Memory allocation error (%luB)", (unsigned long)(2 * sizeof(*array)));
+		sprintf(error_buffer, "Memory allocation error (%zuB)", 2 * sizeof(*array));
 		longjmp(jump_buffer, true);
 	}
 	if (!str) {
@@ -59,7 +59,7 @@ char	**OsuMap_splitString(char *str, char separator, char *error_buffer, jmp_buf
 	return array;
 }
 
-bool	OsuMap_isPositiveInteger(char *str)
+bool	OsuMap_isPositiveInteger(const char *str)
 {
 	int i = 0;
 
@@ -67,7 +67,7 @@ bool	OsuMap_isPositiveInteger(char *str)
 	return str[i] == 0 && i > 0;
 }
 
-bool	OsuMap_isInteger(char *str)
+bool	OsuMap_isInteger(const char *str)
 {
 	int i = 0;
 
@@ -76,7 +76,7 @@ bool	OsuMap_isInteger(char *str)
 	return str[i] == 0 && i > 0;
 }
 
-bool	OsuMap_isFloat(char *str)
+bool	OsuMap_isFloat(const char *str)
 {
 	int i = 0;
 
@@ -88,7 +88,7 @@ bool	OsuMap_isFloat(char *str)
 	return str[i] == 0 && i > 0;
 }
 
-bool	OsuMap_isPositiveFloat(char *str)
+bool	OsuMap_isPositiveFloat(const char *str)
 {
 	int i = 0;
 
@@ -164,7 +164,7 @@ OsuMapCategory	*OsuMap_getCategories(char **lines, char *error_buffer, jmp_buf j
 	if (!lines[0]) {
 		categories = calloc(1, sizeof(*categories));
 		if (!categories) {
-			sprintf(error_buffer, "Memory allocation error (%luB)", (unsigned long)sizeof(*categories));
+			sprintf(error_buffer, "Memory allocation error (%zuB)", sizeof(*categories));
 			longjmp(jump_buffer, true);
 		}
 	}
@@ -176,7 +176,7 @@ OsuMapCategory	*OsuMap_getCategories(char **lines, char *error_buffer, jmp_buf j
 	}
 	categories = calloc(len + 1, sizeof(*categories));
 	if (!categories) {
-		sprintf(error_buffer, "Memory allocation error (%luB)", (unsigned long)((len + 1) * sizeof(*categories)));
+		sprintf(error_buffer, "Memory allocation error (%zuB)", (len + 1) * sizeof(*categories));
 		longjmp(jump_buffer, true);
 	}
 	for (size_t i = 0; lines[i]; currentIndex++) {
@@ -192,7 +192,7 @@ OsuMapCategory	*OsuMap_getCategories(char **lines, char *error_buffer, jmp_buf j
 		for (; lines[i] && lines[i][0] != '['; i++);
 		categories[currentIndex].lines = malloc((i - start + 1) * sizeof(*categories[currentIndex].lines));
 		if (!categories[currentIndex].lines) {
-			sprintf(error_buffer, "Memory allocation error (%luB)", (unsigned long)((i - start + 1) * sizeof(*categories[currentIndex].lines)));
+			sprintf(error_buffer, "Memory allocation error (%zuB)", (i - start + 1) * sizeof(*categories[currentIndex].lines));
 			longjmp(jump_buffer, true);
 		}
 		memcpy(categories[currentIndex].lines, &lines[start], (i - start) * sizeof(*lines));
@@ -206,7 +206,7 @@ unsigned int	OsuMap_getCategoryElementPositiveInteger(char **lines, char *name, 
 	char	*buffer = malloc(strlen(name) + 3);
 
 	if (!buffer) {
-		sprintf(err_buffer, "memory allocation error (%u)", strlen(name) + 3);
+		sprintf(err_buffer, "memory allocation error (%zu)", strlen(name) + 3);
 		longjmp(jump_buffer, true);
 	}
 	sprintf(buffer, "%s:", name);
@@ -215,10 +215,10 @@ unsigned int	OsuMap_getCategoryElementPositiveInteger(char **lines, char *name, 
 			free(buffer);
 			if (OsuMap_isPositiveInteger(lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '))) {
 				return atoi(lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
-			} else {
-				sprintf(err_buffer, "Element '%s' expects a positive integer (but was %s)", name, lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
-				longjmp(jump_buffer, true);
 			}
+
+			sprintf(err_buffer, "Element '%s' expects a positive integer (but was %s)", name, lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
+			longjmp(jump_buffer, true);
 		}
 	free(buffer);
 	if (jump) {
@@ -234,7 +234,7 @@ bool	OsuMap_getCategoryElementBoolean(char **lines, char *name, char *err_buffer
 	char	*buffer = malloc(strlen(name) + 3);
 
 	if (!buffer) {
-		sprintf(err_buffer, "memory allocation error (%u)", strlen(name) + 3);
+		sprintf(err_buffer, "memory allocation error (%zu)", strlen(name) + 3);
 		longjmp(jump_buffer, true);
 	}
 	sprintf(buffer, "%s:", name);
@@ -264,7 +264,7 @@ int	OsuMap_getCategoryElementInteger(char **lines, char *name, char *err_buffer,
 	char	*buffer = malloc(strlen(name) + 3);
 
 	if (!buffer) {
-		sprintf(err_buffer, "memory allocation error (%u)", strlen(name) + 3);
+		sprintf(err_buffer, "memory allocation error (%zu)", strlen(name) + 3);
 		longjmp(jump_buffer, true);
 	}
 	sprintf(buffer, "%s:", name);
@@ -273,10 +273,9 @@ int	OsuMap_getCategoryElementInteger(char **lines, char *name, char *err_buffer,
 			free(buffer);
 			if (OsuMap_isInteger(lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' ')))
 				return atoi(lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
-			else {
-				sprintf(err_buffer, "Element '%s' expects an integer (but was %s)", name, lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
-				longjmp(jump_buffer, true);
-			}
+
+			sprintf(err_buffer, "Element '%s' expects an integer (but was %s)", name, lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
+			longjmp(jump_buffer, true);
 		}
 	free(buffer);
 	if (jump) {
@@ -292,7 +291,7 @@ double	OsuMap_getCategoryElementPositiveFloat(char **lines, char *name, char *er
 	char	*buffer = malloc(strlen(name) + 3);
 
 	if (!buffer) {
-		sprintf(err_buffer, "memory allocation error (%u)", strlen(name) + 3);
+		sprintf(err_buffer, "memory allocation error (%zu)", strlen(name) + 3);
 		longjmp(jump_buffer, true);
 	}
 	sprintf(buffer, "%s:", name);
@@ -301,11 +300,9 @@ double	OsuMap_getCategoryElementPositiveFloat(char **lines, char *name, char *er
 			free(buffer);
 			if (OsuMap_isPositiveFloat(lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' ')))
 				return atof(lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
-			else {
-				sprintf(err_buffer, "Element '%s' expects a positive floating number (but was %s)",
-					name, lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
-				longjmp(jump_buffer, true);
-			}
+			sprintf(err_buffer, "Element '%s' expects a positive floating number (but was %s)",
+				name, lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
+			longjmp(jump_buffer, true);
 		}
 	free(buffer);
 	if (jump) {
@@ -321,7 +318,7 @@ double	OsuMap_getCategoryElementFloat(char **lines, char *name, char *err_buffer
 	char	*buffer = malloc(strlen(name) + 3);
 
 	if (!buffer) {
-		sprintf(err_buffer, "memory allocation error (%u)", strlen(name) + 3);
+		sprintf(err_buffer, "memory allocation error (%zu)", strlen(name) + 3);
 		longjmp(jump_buffer, true);
 	}
 	sprintf(buffer, "%s:", name);
@@ -330,10 +327,9 @@ double	OsuMap_getCategoryElementFloat(char **lines, char *name, char *err_buffer
 			free(buffer);
 			if (OsuMap_isFloat(lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' ')))
 				return atof(lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
-			else {
-				sprintf(err_buffer, "Element '%s' expects a floating number (but was %s)", name, lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
-				longjmp(jump_buffer, true);
-			}
+
+			sprintf(err_buffer, "Element '%s' expects a floating number (but was %s)", name, lines[i] + strlen(name) + 1 + (*(lines[i] + strlen(name) + 1) == ' '));
+			longjmp(jump_buffer, true);
 		}
 	free(buffer);
 	if (jump) {
@@ -349,7 +345,7 @@ char	*OsuMap_getCategoryElementRaw(char **lines, char *name, char *err_buffer, j
 	char	*buffer = malloc(strlen(name) + 3);
 
 	if (!buffer) {
-		sprintf(err_buffer, "memory allocation error (%u)", strlen(name) + 3);
+		sprintf(err_buffer, "memory allocation error (%zu)", strlen(name) + 3);
 		longjmp(jump_buffer, true);
 	}
 	sprintf(buffer, "%s:", name);
@@ -370,12 +366,12 @@ char	*OsuMap_getCategoryElementRaw(char **lines, char *name, char *err_buffer, j
 
 OsuMap_unsignedIntegerArray	OsuMap_getCategoryElementUIntegerArray(char **lines, char *name, char *err_buffer, jmp_buf jump_buffer, bool jump)
 {
-	char				**values;
+	char				**values = NULL;
 	OsuMap_unsignedIntegerArray	result = {0, NULL};
 	char	*buffer = malloc(strlen(name) + 3);
 
 	if (!buffer) {
-		sprintf(err_buffer, "memory allocation error (%u)", strlen(name) + 3);
+		sprintf(err_buffer, "memory allocation error (%zu)", strlen(name) + 3);
 		longjmp(jump_buffer, true);
 	}
 	sprintf(buffer, "%s: ", name);
@@ -386,7 +382,7 @@ OsuMap_unsignedIntegerArray	OsuMap_getCategoryElementUIntegerArray(char **lines,
 				result.length += lines[i][j] == ',';
 			result.content = malloc((result.length + 1) * sizeof(*result.content));
 			if (!result.content) {
-				sprintf(err_buffer, "Memory allocation error (%luB)", (unsigned long)(result.length * sizeof(*result.content)));
+				sprintf(err_buffer, "Memory allocation error (%zuB)", result.length * sizeof(*result.content));
 				longjmp(jump_buffer, true);
 			}
 			values = OsuMap_splitString(lines[i] + strlen(name) + 2, ',', err_buffer, jump_buffer);
@@ -450,7 +446,7 @@ OsuMap_editorInfos	OsuMap_getCategoryEditor(OsuMapCategory *category, char *err_
 
 	infos.bookmarks =	OsuMap_getCategoryElementUIntegerArray	(category->lines, "Bookmarks",		err_buffer, jump_buffer, false);
 	infos.distanceSpacing =	OsuMap_getCategoryElementFloat		(category->lines, "DistanceSpacing",	err_buffer, jump_buffer, false);
-	infos.beatDivision =	OsuMap_getCategoryElementPositiveInteger(category->lines, "BeatDivisor",	err_buffer, jump_buffer, false);
+	infos.beatDivision =	OsuMap_getCategoryElementPositiveFloat(category->lines, "BeatDivisor",	err_buffer, jump_buffer, false);
 	infos.distanceSpacing =	OsuMap_getCategoryElementPositiveInteger(category->lines, "GridSize",		err_buffer, jump_buffer, false);
 	infos.timeLineZoom =	OsuMap_getCategoryElementPositiveFloat	(category->lines, "TimelineZoom",	err_buffer, jump_buffer, false);
 	return infos;
@@ -502,7 +498,7 @@ OsuMap_difficultyInfos	OsuMap_getCategoryDifficulty(OsuMapCategory *category, ch
 
 long	OsuMap_getInteger(char *nbr, int min, int max, char *err_buffer, jmp_buf jump_buffer)
 {
-	char	*end;
+	char	*end = NULL;
 	long	result = nbr ? strtol(nbr, &end, 10) : 0;
 
 	if (!nbr || *end) {
@@ -526,7 +522,7 @@ long	OsuMap_getInteger(char *nbr, int min, int max, char *err_buffer, jmp_buf ju
 
 double	OsuMap_getFloat(char *nbr, double min, double max, char *err_buffer, jmp_buf jump_buffer)
 {
-	char	*end;
+	char	*end = NULL;
 	double	result = nbr ? strtof(nbr, &end) : 0;
 
 	if (!nbr || *end) {
@@ -548,12 +544,12 @@ double	OsuMap_getFloat(char *nbr, double min, double max, char *err_buffer, jmp_
 	return result;
 }
 
-OsuIntegerVector	OsuMap_getIntegerVector(char *str, char *err_buffer, jmp_buf jump_buffer)
+OsuLongVector	OsuMap_getIntegerVector(char *str, char *err_buffer, jmp_buf jump_buffer)
 {
 	char			*line = strdup(str);
 	char			**elems = OsuMap_splitString(str, ':', err_buffer, jump_buffer);
 	size_t			len = OsuMap_getStringArraySize(elems);
-	OsuIntegerVector	vector;
+	OsuLongVector		vector;
 
 	if (len != 2) {
 		sprintf("Invalid integer vector '%s': Expected 2 values but got %u", line, (unsigned)len);
@@ -568,15 +564,15 @@ OsuIntegerVector	OsuMap_getIntegerVector(char *str, char *err_buffer, jmp_buf ju
 	return vector;
 }
 
-OsuIntegerVectorArray	OsuMap_getIntegerVectorArray(char *str, char *err_buffer, jmp_buf jump_buffer)
+OsuLongVectorArray	OsuMap_getIntegerVectorArray(char *str, char *err_buffer, jmp_buf jump_buffer)
 {
-	OsuIntegerVectorArray	array;
+	OsuLongVectorArray	array;
 	char			**elems = OsuMap_splitString(str, '|', err_buffer, jump_buffer);
 
 	array.length = OsuMap_getStringArraySize(elems);
 	array.content = malloc(array.length * sizeof(*array.content));
 	if (!array.content) {
-		sprintf(err_buffer, "Memory allocation error (%luB)", (unsigned long)(array.length * sizeof(*array.content)));
+		sprintf(err_buffer, "Memory allocation error (%zuB)", array.length * sizeof(*array.content));
 		free(elems);
 		longjmp(jump_buffer, true);
 	}
@@ -596,10 +592,10 @@ OsuMap_hitObjectAddition	OsuMap_getExtraInfos(char *line, char *err_buffer, jmp_
 		longjmp(jump_buffer, true);
 	}
 	memset(&infos, 0, sizeof(infos));
-	infos.sampleSet.sampleSet =		OsuMap_getInteger(elems[0], 0, 3,   err_buffer, jump_buffer);
-	infos.sampleSet.additionsSampleSet =	OsuMap_getInteger(elems[1], 0, 3,   err_buffer, jump_buffer);
+	infos.sampleSet.sampleSet =		(char)OsuMap_getInteger(elems[0], 0, 3,   err_buffer, jump_buffer);
+	infos.sampleSet.additionsSampleSet =	(char)OsuMap_getInteger(elems[1], 0, 3,   err_buffer, jump_buffer);
 	infos.customIndex =			OsuMap_getInteger(elems[2], 0, 0,   err_buffer, jump_buffer);
-	infos.sampleVolume =			OsuMap_getInteger(elems[3], 0, 100, err_buffer, jump_buffer);
+	infos.sampleVolume =			(char)OsuMap_getInteger(elems[3], 0, 100, err_buffer, jump_buffer);
 	infos.fileName =			elems[4];
 	free(elems);
 	return infos;
@@ -616,8 +612,8 @@ bool	Osumap_isInString(char c, char const *str)
 OsuMap_hitObjectSliderInfos	OsuMap_getSliderInfos(char **elems, char *err_buffer, jmp_buf jump_buffer)
 {
 	OsuMap_hitObjectSliderInfos	infos;
-	char				**nbr;
-	char				**buffer;
+	char				**nbr = NULL;
+	char				**buffer = NULL;
 
 	memset(&infos, 0, sizeof(infos));
 	infos.type = *elems[0];
@@ -643,8 +639,7 @@ OsuMap_hitObjectSliderInfos	OsuMap_getSliderInfos(char **elems, char *err_buffer
 		}
 		infos.edgeHitsounds = malloc(OsuMap_getStringArraySize(nbr) + 1);
 		if (!infos.edgeHitsounds) {
-			sprintf(err_buffer, "Memory allocation error (%luB)",
-				(unsigned long)(OsuMap_getStringArraySize(nbr) + 1));
+			sprintf(err_buffer, "Memory allocation error (%zuB)", OsuMap_getStringArraySize(nbr) + 1);
 			free(nbr);
 			longjmp(jump_buffer, true);
 		}
@@ -662,15 +657,14 @@ OsuMap_hitObjectSliderInfos	OsuMap_getSliderInfos(char **elems, char *err_buffer
 			}
 			infos.edgeAdditions = malloc((OsuMap_getStringArraySize(nbr) + 1) * sizeof(*infos.edgeAdditions));
 			if (!infos.edgeAdditions) {
-				sprintf(err_buffer, "Memory allocation error (%luB)",
-					(unsigned long)((OsuMap_getStringArraySize(nbr) + 1) * sizeof(*infos.edgeAdditions)));
+				sprintf(err_buffer, "Memory allocation error (%zuB)", (OsuMap_getStringArraySize(nbr) + 1) * sizeof(*infos.edgeAdditions));
 				free(nbr);
 				longjmp(jump_buffer, true);
 			}
 			for (int i = 0; nbr[i]; i++) {
 				buffer = OsuMap_splitString(nbr[i], ':', err_buffer, jump_buffer);
-				infos.edgeAdditions[i].sampleSet = OsuMap_getInteger(buffer[0], 0, 3, err_buffer, jump_buffer);
-				infos.edgeAdditions[i].additionsSampleSet = OsuMap_getInteger(buffer[1], 0, 3, err_buffer, jump_buffer);
+				infos.edgeAdditions[i].sampleSet = (char)OsuMap_getInteger(buffer[0], 0, 3, err_buffer, jump_buffer);
+				infos.edgeAdditions[i].additionsSampleSet = (char)OsuMap_getInteger(buffer[1], 0, 3, err_buffer, jump_buffer);
 				free(buffer);
 			}
 			free(nbr);
@@ -688,7 +682,7 @@ OsuMap_hitObject	OsuMap_parseLineToHitObject(char *line, char *err_buffer, jmp_b
 
 	len = OsuMap_getStringArraySize(elems);
 	if (len < 5) {
-		sprintf(err_buffer, "Invalid Hit object infos '%s': At least 5 fields expected but %i found", old, len);
+		sprintf(err_buffer, "Invalid Hit object infos '%s': At least 5 fields expected but %zu found", old, len);
 		free(old);
 		longjmp(jump_buffer, true);
 	}
@@ -701,14 +695,14 @@ OsuMap_hitObject	OsuMap_parseLineToHitObject(char *line, char *err_buffer, jmp_b
 
 	if (obj.type & HITOBJ_SLIDER) {
 		if (len < 8 || len > 11) {
-			sprintf(err_buffer, "Invalid hit object infos '%s': 8-11 fields expected but %i found", old, len);
+			sprintf(err_buffer, "Invalid hit object infos '%s': 8-11 fields expected but %zu found", old, len);
 			free(elems);
 			free(old);
 			longjmp(jump_buffer, true);
 		}
 		obj.additionalInfos = malloc(sizeof(OsuMap_hitObjectSliderInfos));
 		if (!obj.additionalInfos) {
-			sprintf(err_buffer, "Memory allocation error (%luB)", (unsigned long)sizeof(OsuMap_hitObjectSliderInfos));
+			sprintf(err_buffer, "Memory allocation error (%zuB)", sizeof(OsuMap_hitObjectSliderInfos));
 			free(elems);
 			free(old);
 			longjmp(jump_buffer, true);
@@ -719,14 +713,14 @@ OsuMap_hitObject	OsuMap_parseLineToHitObject(char *line, char *err_buffer, jmp_b
 
 	} else if (obj.type & HITOBJ_SPINNER) {
 		if (len < 6 || len > 7) {
-			sprintf(err_buffer, "Invalid hit object infos '%s': 7 fields expected but %i found", old, len);
+			sprintf(err_buffer, "Invalid hit object infos '%s': 7 fields expected but %zu found", old, len);
 			free(elems);
 			free(old);
 			longjmp(jump_buffer, true);
 		}
 		obj.additionalInfos = malloc(sizeof(unsigned long));
 		if (!obj.additionalInfos) {
-			sprintf(err_buffer, "Memory allocation error (%luB)", (unsigned long)sizeof(unsigned long));
+			sprintf(err_buffer, "Memory allocation error (%zuB)", sizeof(unsigned long));
 			free(elems);
 			free(old);
 			longjmp(jump_buffer, true);
@@ -737,7 +731,7 @@ OsuMap_hitObject	OsuMap_parseLineToHitObject(char *line, char *err_buffer, jmp_b
 
 	} else {
 		if (len < 5 || len > 6) {
-			sprintf(err_buffer, "Invalid hit object infos '%s': 6 fields expected but %i found", old, len);
+			sprintf(err_buffer, "Invalid hit object infos '%s': 6 fields expected but %zu found", old, len);
 			free(elems);
 			free(old);
 			longjmp(jump_buffer, true);
@@ -763,7 +757,7 @@ OsuMap_hitObjectArray	OsuMap_getCategoryHitObject(OsuMapCategory *category, char
 	for (; category->lines[elements.length]; elements.length++);
 	elements.content = malloc(elements.length * sizeof(*elements.content));
 	if (!elements.content) {
-		sprintf(err_buffer, "Memory allocation error (%luB)", (unsigned long)(elements.length * sizeof(*elements.content)));
+		sprintf(err_buffer, "Memory allocation error (%zuB)", elements.length * sizeof(*elements.content));
 		longjmp(jump_buffer, true);
 	}
 	for (int i = 0; category->lines[i]; i++)
@@ -773,10 +767,10 @@ OsuMap_hitObjectArray	OsuMap_getCategoryHitObject(OsuMapCategory *category, char
 
 OsuMap_color	OsuMap_parseLineColor(char *line, char *err_buffer, jmp_buf jump_buffer, int nb)
 {
-	OsuMap_color	 color;
+	OsuMap_color	color;
 	char		buffer[11];
 	int		i = 5;
-	char		**elems;
+	char		**elems = NULL;
 
 	sprintf(buffer, "%i", nb + 1);
 	if (strncmp(buffer, &line[i], strlen(buffer)) != 0) {
@@ -803,7 +797,7 @@ OsuMap_color	OsuMap_parseLineColor(char *line, char *err_buffer, jmp_buf jump_bu
 	for (; line[i] == ' '; i++);
 	elems = OsuMap_splitString(&line[i], ',', err_buffer, jump_buffer);
 	if (OsuMap_getStringArraySize(elems) != 3) {
-		sprintf(err_buffer, "Invalid color '%s': Expected RGB value but %u values were found", line, OsuMap_getStringArraySize(elems));
+		sprintf(err_buffer, "Invalid color '%s': Expected RGB value but %zu values were found", line, OsuMap_getStringArraySize(elems));
 		free(elems);
 		longjmp(jump_buffer, true);
 	}
@@ -831,7 +825,7 @@ OsuMap_colorArray	OsuMap_getCategoryColors(OsuMapCategory *category, char *err_b
 		elements.length += OsuMap_stringStartsWith(category->lines[i], "Combo");
 	elements.content = malloc(elements.length * sizeof(*elements.content));
 	if (!elements.content) {
-		sprintf(err_buffer, "Memory allocation error (%luB)", (unsigned long)(elements.length * sizeof(*elements.content)));
+		sprintf(err_buffer, "Memory allocation error (%zuB)", elements.length * sizeof(*elements.content));
 		longjmp(jump_buffer, true);
 	}
 	for (int i = 0; category->lines[i]; i++)
@@ -850,8 +844,8 @@ double OsuMap_getIhnheritTimingPoint(OsuMap_timingPointEvent *array)
 OsuMap_timingPointArray	OsuMap_getCatergoryTimingPoints(OsuMapCategory *category, char *err_buffer, jmp_buf jump_buffer)
 {
 	OsuMap_timingPointArray	elements = {0, NULL};
-	char			**elems;
-	double			buffer;
+	char			**elems = NULL;
+	double			buffer = 0;
 
 	memset(&elements, 0, sizeof(elements));
 	if (!category) {
@@ -862,7 +856,7 @@ OsuMap_timingPointArray	OsuMap_getCatergoryTimingPoints(OsuMapCategory *category
 	for (; category->lines[elements.length]; elements.length++);
 	elements.content = malloc(elements.length * sizeof(*elements.content));
 	if (!elements.content) {
-		sprintf(err_buffer, "Memory allocation error (%luB)", (unsigned long)(elements.length * sizeof(*elements.content)));
+		sprintf(err_buffer, "Memory allocation error (%zuB)", elements.length * sizeof(*elements.content));
 		longjmp(jump_buffer, true);
 	}
 	for (int i = 0; category->lines[i]; i++) {
@@ -884,7 +878,7 @@ OsuMap_timingPointArray	OsuMap_getCatergoryTimingPoints(OsuMapCategory *category
 		if (OsuMap_getStringArraySize(elems) > 4)
 			elements.content[i].sampleIndex = OsuMap_getInteger(elems[4], 0, 0, err_buffer, jump_buffer);
 		if (OsuMap_getStringArraySize(elems) > 5)
-			elements.content[i].volume = OsuMap_getInteger(elems[5], 0, 0, err_buffer, jump_buffer);
+			elements.content[i].volume = (char)OsuMap_getInteger(elems[5], 0, 0, err_buffer, jump_buffer);
 		free(elems);
 	}
 	return elements;
@@ -929,13 +923,13 @@ OsuMapCategory	*OsuMap_getCategory(OsuMapCategory *categories, char *name)
 OsuMap	OsuMap_parseMapString(const char *string)
 {
 	OsuMap		result;
-	static	char	error[PATH_MAX + 1024];
+	static	char	error[PATH_MAX + 1024 + 39]; // Additional 39 bytes are here to fit the error string below.
 	char		buffer[PATH_MAX + 1024];
 	char		**lines = NULL;
 	OsuMapCategory	*categories = NULL;
 	jmp_buf		jump_buffer;
 
-	//Init the error handler
+	// Initialize the error handler.
 	if (setjmp(jump_buffer)) {
 		strcpy(buffer, error);
 		sprintf(error, "An error occurred when parsing string:\n%s", buffer);
@@ -980,11 +974,11 @@ OsuMap	OsuMap_parseMapFile(const char *path)
 	struct stat	stats;
 	OsuMap		result;
 	static	char	error[PATH_MAX + 1024];
-	FILE		*stream;
-	int		fd;
-	char		*buffer;
+	FILE		*stream = NULL;
+	int		fd = 0;
+	char		*buffer = NULL;
 
-	//Open file
+	// Open file.
 	stream = fopen(path, "r");
 	if (!stream) {
 		sprintf(error, "%s: %s", path, strerror(errno));
@@ -992,7 +986,7 @@ OsuMap	OsuMap_parseMapFile(const char *path)
 		return result;
 	}
 
-	//Create buffer
+	// Create buffer.
 	memset(&result, 0, sizeof(result));
 	if (stat(path, &stats) < 0) {
 		sprintf(error, "%s: %s", path, strerror(errno));
@@ -1008,12 +1002,12 @@ OsuMap	OsuMap_parseMapFile(const char *path)
 		return result;
 	}
 
-	//Read file
+	// Read file.
 	fd = fileno(stream);
 	buffer[read(fd, buffer, size)] = 0;
 	fclose(stream);
 
-	//Parse content
+	// Parse content.
 	result = OsuMap_parseMapString(buffer);
 	if (result.error) {
 		sprintf(error, "An error occurred when parsing %s:\n%s", path, result.error);
